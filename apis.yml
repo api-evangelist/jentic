@@ -5,7 +5,8 @@ apis:
   - aid: jentic:jentic
     name: Jentic
     tags:
-      - API
+      - Workflows
+      - Integrations
     humanURL: https://jentic.com/
     properties:
       - url: https://jentic.com/
@@ -24,6 +25,19 @@ tags:
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
+common:
+  - url: https://jentic.com/
+    name: Jentic
+    type: Website
+    description: 'null'
+  - url: https://jentic.com/blog
+    name: Jentic Blog | Insights & Updates
+    type: Blog
+    description: 'null'
+  - url: https://docs.jentic.com/
+    name: Jentic Documentation
+    type: Documentation
+    description: 'null'
 created: '2026-01-02'
 modified: '2026-01-02'
 position: Consumer
@@ -41,16 +55,3 @@ maintainers:
   - FN: Kin Lane
     email: info@apievangelist.com
 specificationVersion: '0.19'
-common:
-  - name: Jentic
-    description: 'null'
-    url: https://jentic.com/
-    type: Website
-  - name: Jentic Blog | Insights & Updates
-    description: 'null'
-    url: https://jentic.com/blog
-    type: Blog
-  - name: Jentic Documentation
-    description: 'null'
-    url: https://docs.jentic.com/
-    type: Documentation
