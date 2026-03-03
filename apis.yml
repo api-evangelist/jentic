@@ -41,6 +41,8 @@ common:
 created: '2026-01-02'
 modified: '2026-01-02'
 position: Consumer
+segments:
+  - Workflows
 description: >-
   Jentic is a cutting-edge tech company that specializes in creating innovative
   software solutions for businesses of all sizes. Their team of skilled
