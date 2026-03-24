@@ -1,0 +1,465 @@
+openapi: 3.1.0
+info:
+  title: Jentic API
+  description: >-
+    The Jentic API enables AI agents to dynamically discover, load, and execute
+    APIs and workflows through a standards-based platform. The API provides
+    three core operations: searching the Jentic catalog for relevant APIs and
+    workflows using natural language queries, loading detailed execution
+    information including input schemas and authentication requirements, and
+    executing operations with managed authentication and credential injection.
+    Built on OpenAPI and Arazzo specifications, the platform offers access to
+    over 1500 APIs and 2000 agent-ready workflows with secure, server-side
+    credential management.
+  version: '1'
+  contact:
+    name: Jentic Support
+    url: https://docs.jentic.com/community/support/
+  termsOfService: https://jentic.com/terms
+externalDocs:
+  description: Jentic Documentation
+  url: https://docs.jentic.com/
+servers:
+  - url: https://api.jentic.com/api/v1
+    description: Production Server
+tags:
+  - name: Authentication
+    description: >-
+      Registration and API key management for accessing the Jentic platform.
+  - name: Search
+    description: >-
+      Search the Jentic catalog for APIs and workflows matching natural language
+      queries. Returns semantically ranked operations from the API catalog.
+  - name: Execution
+    description: >-
+      Load execution details and execute API operations and workflows with
+      managed authentication and credential injection.
+security:
+  - apiKeyAuth: []
+paths:
+  /auth/register:
+    post:
+      operationId: registerAccount
+      summary: Register a new account
+      description: >-
+        Registers a new account with the Jentic platform and returns an API key.
+        An optional email address can be provided to receive higher rate limits.
+        The returned API key should be stored securely and used in subsequent
+        requests via the X-JENTIC-API-KEY header.
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /agents/search:
+    post:
+      operationId: searchApis
+      summary: Search for APIs and workflows
+      description: >-
+        Searches the Jentic catalog for APIs and workflows that match the
+        provided natural language query. Results are semantically ranked based
+        on relevance to the query. Returns operation identifiers that can be
+        used with the load and execute endpoints. Supports limiting the number
+        of results returned.
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /agents/load:
+    post:
+      operationId: loadExecutionInfo
+      summary: Load execution information for operations
+      description: >-
+        Retrieves detailed specifications for one or more API operations or
+        workflows from the Jentic catalog. Returns the full specification
+        including HTTP method, path, input schemas, authentication requirements,
+        and other metadata needed to execute the operation. Use the operation
+        identifiers returned from the search endpoint.
+      tags:
+        - Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadRequest'
+      responses:
+        '200':
+          description: Execution information loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoadResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Operation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /agents/execute:
+    post:
+      operationId: executeOperation
+      summary: Execute an API operation or workflow
+      description: >-
+        Executes a specific API operation or workflow through the Jentic
+        platform. Credentials for the upstream API are injected server-side by
+        Jentic and are never sent to or stored by the agent. The operation is
+        identified by its UUID, and the required inputs should match the schema
+        returned by the load endpoint. Supports both single API operations and
+        multi-step Arazzo workflows.
+      tags:
+        - Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+      responses:
+        '200':
+          description: Operation executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '400':
+          description: Bad request - invalid inputs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Operation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable entity - missing required inputs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: Upstream API error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-JENTIC-API-KEY
+      description: >-
+        API key for authenticating requests to the Jentic platform. Obtained
+        via the register endpoint or through the Jentic web application at
+        app.jentic.com.
+  schemas:
+    RegisterRequest:
+      type: object
+      description: >-
+        Request body for registering a new Jentic account.
+      properties:
+        email:
+          type: string
+          format: email
+          description: >-
+            Optional email address for the account. Providing an email grants
+            higher rate limits.
+    RegisterResponse:
+      type: object
+      description: >-
+        Response containing the newly generated API key and account details.
+      required:
+        - api_key
+      properties:
+        api_key:
+          type: string
+          description: >-
+            The generated API key to use in subsequent requests via the
+            X-JENTIC-API-KEY header.
+        uuid:
+          type: string
+          description: >-
+            The unique identifier for the registered account.
+    SearchRequest:
+      type: object
+      description: >-
+        Request body for searching the Jentic API catalog using natural
+        language queries.
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: >-
+            Natural language query describing the desired API capability, such
+            as "send an email" or "find a restaurant in Dublin".
+          minLength: 1
+        limit:
+          type: integer
+          description: >-
+            Maximum number of search results to return.
+          minimum: 1
+          default: 5
+    SearchResponse:
+      type: object
+      description: >-
+        Response containing semantically ranked search results from the Jentic
+        catalog.
+      properties:
+        results:
+          type: array
+          description: >-
+            List of matching API operations and workflows, ranked by semantic
+            relevance to the query.
+          items:
+            $ref: '#/components/schemas/SearchResult'
+    SearchResult:
+      type: object
+      description: >-
+        A single search result representing an API operation or workflow.
+      properties:
+        uuid:
+          type: string
+          description: >-
+            Unique identifier for the operation, prefixed with "op_" for
+            operations or "wf_" for workflows.
+          pattern: '^(op_|wf_).+'
+        name:
+          type: string
+          description: >-
+            Human-readable name of the operation or workflow.
+        description:
+          type: string
+          description: >-
+            Detailed description of what the operation does.
+        api_name:
+          type: string
+          description: >-
+            Name of the API that provides this operation.
+        type:
+          type: string
+          description: >-
+            The type of result, either an individual operation or a multi-step
+            workflow.
+          enum:
+            - operation
+            - workflow
+        score:
+          type: number
+          format: float
+          description: >-
+            Semantic relevance score indicating how well this result matches
+            the search query.
+    LoadRequest:
+      type: object
+      description: >-
+        Request body for loading detailed execution information for one or more
+        operations.
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          description: >-
+            List of operation or workflow UUIDs to load execution information
+            for.
+          items:
+            type: string
+          minItems: 1
+    LoadResponse:
+      type: object
+      description: >-
+        Response containing detailed execution information for the requested
+        operations.
+      properties:
+        tool_info:
+          type: object
+          description: >-
+            Map of operation UUIDs to their detailed execution information
+            including input schemas, HTTP methods, paths, and authentication
+            requirements.
+          additionalProperties:
+            $ref: '#/components/schemas/ToolInfo'
+    ToolInfo:
+      type: object
+      description: >-
+        Detailed execution information for a single API operation or workflow.
+      properties:
+        name:
+          type: string
+          description: >-
+            Human-readable name of the operation.
+        description:
+          type: string
+          description: >-
+            Detailed description of the operation.
+        method:
+          type: string
+          description: >-
+            HTTP method for the operation.
+          enum:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+        path:
+          type: string
+          description: >-
+            URL path template for the operation.
+        inputs:
+          type: object
+          description: >-
+            JSON Schema describing the required and optional input parameters
+            for the operation.
+          additionalProperties: true
+        auth_required:
+          type: boolean
+          description: >-
+            Whether this operation requires upstream API credentials to be
+            configured in the Jentic credential vault.
+    ExecutionRequest:
+      type: object
+      description: >-
+        Request body for executing an API operation or workflow through the
+        Jentic platform.
+      required:
+        - execution_type
+        - uuid
+      properties:
+        execution_type:
+          type: string
+          description: >-
+            The type of execution to perform, either a single API operation or
+            a multi-step Arazzo workflow.
+          enum:
+            - operation
+            - workflow
+        uuid:
+          type: string
+          description: >-
+            The unique identifier of the operation or workflow to execute,
+            as returned by the search endpoint.
+          pattern: '^(op_|wf_).+'
+        inputs:
+          type: object
+          description: >-
+            Input parameters for the operation, matching the schema returned
+            by the load endpoint.
+          additionalProperties: true
+    ExecutionResponse:
+      type: object
+      description: >-
+        Response containing the results of executing an API operation or
+        workflow.
+      properties:
+        output:
+          description: >-
+            The output data returned by the executed operation or workflow.
+            Structure varies depending on the upstream API.
+        status:
+          type: string
+          description: >-
+            The execution status.
+          enum:
+            - success
+            - error
+        execution_id:
+          type: string
+          description: >-
+            Unique identifier for this execution, useful for debugging and
+            observability.
+    ErrorResponse:
+      type: object
+      description: >-
+        Standard error response returned when a request fails.
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: >-
+            Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: >-
+            Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          description: >-
+            Additional error details when available.
+          additionalProperties: true

@@ -1,0 +1,106 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "jentic": "https://jentic.com/ns/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+
+    "Agent": {
+      "@id": "jentic:Agent",
+      "@context": {
+        "name": "schema:name",
+        "description": "schema:description",
+        "apiKey": "jentic:apiKey",
+        "allowedApis": {
+          "@id": "jentic:allowedApis",
+          "@container": "@set"
+        },
+        "allowedWorkflows": {
+          "@id": "jentic:allowedWorkflows",
+          "@container": "@set"
+        },
+        "credentials": {
+          "@id": "jentic:credentials",
+          "@container": "@set"
+        },
+        "rateLimit": "jentic:rateLimit",
+        "createdAt": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "updatedAt": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Operation": {
+      "@id": "jentic:Operation",
+      "@context": {
+        "uuid": "jentic:uuid",
+        "name": "schema:name",
+        "description": "schema:description",
+        "operationType": "jentic:operationType",
+        "apiName": "jentic:apiName",
+        "method": "jentic:httpMethod",
+        "path": {
+          "@id": "jentic:path",
+          "@type": "@id"
+        },
+        "inputs": "jentic:inputs",
+        "authRequired": "jentic:authRequired",
+        "tags": {
+          "@id": "schema:keywords",
+          "@container": "@set"
+        }
+      }
+    },
+
+    "Workflow": {
+      "@id": "jentic:Workflow",
+      "@context": {
+        "uuid": "jentic:uuid",
+        "name": "schema:name",
+        "description": "schema:description",
+        "steps": {
+          "@id": "jentic:steps",
+          "@container": "@list"
+        },
+        "apiName": "jentic:apiName"
+      }
+    },
+
+    "Credential": {
+      "@id": "jentic:Credential",
+      "@context": {
+        "apiName": "jentic:apiName",
+        "credentialType": "jentic:credentialType",
+        "credentialId": "jentic:credentialId",
+        "status": "jentic:status"
+      }
+    },
+
+    "SearchResult": {
+      "@id": "jentic:SearchResult",
+      "@context": {
+        "uuid": "jentic:uuid",
+        "name": "schema:name",
+        "description": "schema:description",
+        "score": "jentic:relevanceScore",
+        "resultType": "jentic:resultType",
+        "apiName": "jentic:apiName"
+      }
+    },
+
+    "ExecutionResult": {
+      "@id": "jentic:ExecutionResult",
+      "@context": {
+        "executionId": "jentic:executionId",
+        "status": "jentic:executionStatus",
+        "output": "jentic:output"
+      }
+    }
+  }
+}

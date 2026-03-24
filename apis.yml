@@ -23,6 +23,8 @@ apis:
         type: GitHubOrganization
       - url: https://jentic.com/pricing
         type: Pricing
+      - url: openapi/jentic-api-openapi.yml
+        type: OpenAPI
     description: >-
       Jentic enables AI agents to dynamically discover and execute APIs and
       workflows through a standards-based, open-source catalog. With managed
@@ -111,8 +113,14 @@ common:
     name: Jentic Security
     type: Security
     description: 'null'
+  - url: json-ld/jentic-context.jsonld
+    type: JSON-LD
+  - url: json-schema/jentic-operation-schema.json
+    type: JSONSchema
+  - url: json-schema/jentic-agent-schema.json
+    type: JSONSchema
 created: '2026-01-02'
-modified: '2026-03-16'
+modified: '2026-03-24'
 position: Consumer
 segments:
   - Workflows

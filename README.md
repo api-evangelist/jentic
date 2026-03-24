@@ -5,9 +5,9 @@ Jentic is an AI infrastructure company building the agentic knowledge layer for 
 
 ## Scope
 
-- **Type:** Index 
-- **Position:** Consuming 
-- **Access:** 3rd-Party 
+- **Type:** Contract
+- **Position:** Consuming
+- **Access:** 3rd-Party
 
 ## Tags:
 
@@ -15,8 +15,8 @@ Jentic is an AI infrastructure company building the agentic knowledge layer for 
 
 ## Timestamps
 
-- **Created:** 2026-01-02 
-- **Modified:** 2026-03-16 
+- **Created:** 2026-01-02
+- **Modified:** 2026-03-24
 
 ## APIs
 
@@ -37,6 +37,7 @@ Jentic enables AI agents to dynamically discover and execute APIs and workflows 
 - [SignUp](https://app.jentic.com/sign-up)
 - [GitHubOrganization](https://github.com/jentic/jentic-sdks)
 - [Pricing](https://jentic.com/pricing)
+- [OpenAPI](openapi/jentic-api-openapi.yml)
 
 ## Common Properties
 
@@ -57,9 +58,12 @@ Jentic enables AI agents to dynamically discover and execute APIs and workflows 
 - [Press](https://jentic.com/blog/press)
 - [BlogFeed](https://jentic.com/blog/feed.xml)
 - [Security](https://docs.jentic.com/community/security/)
+- [JSON-LD](json-ld/jentic-context.jsonld)
+- [JSONSchema](json-schema/jentic-operation-schema.json)
+- [JSONSchema](json-schema/jentic-agent-schema.json)
 
 ## Maintainers
 
-**FN:** Kin Lane
+**FN:** API Evangelist
 
-**Email:** kin@apievangelist.com
+**Email:** info@apievangelist.com

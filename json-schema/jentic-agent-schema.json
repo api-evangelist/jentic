@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jentic.com/schemas/jentic/agent.json",
+  "title": "Jentic Agent",
+  "description": "Represents an AI agent configured on the Jentic platform, including its scoped API access, credentials, and API key configuration.",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the agent.",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the agent's purpose and capabilities."
+    },
+    "api_key": {
+      "type": "string",
+      "description": "The scoped API key for this agent, used in the X-JENTIC-API-KEY header."
+    },
+    "allowed_apis": {
+      "type": "array",
+      "description": "List of API identifiers this agent is permitted to access.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowed_workflows": {
+      "type": "array",
+      "description": "List of workflow identifiers this agent is permitted to execute.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "credentials": {
+      "type": "array",
+      "description": "Upstream API credentials assigned to this agent, stored encrypted in the Jentic credential vault.",
+      "items": {
+        "$ref": "#/$defs/CredentialReference"
+      }
+    },
+    "rate_limit": {
+      "$ref": "#/$defs/RateLimit",
+      "description": "Rate limiting configuration for this agent."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the agent was created."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the agent was last updated."
+    }
+  },
+  "$defs": {
+    "CredentialReference": {
+      "type": "object",
+      "description": "Reference to an encrypted credential stored in the Jentic vault for a specific upstream API.",
+      "required": ["api_name", "credential_type"],
+      "properties": {
+        "api_name": {
+          "type": "string",
+          "description": "Name of the upstream API this credential authenticates with."
+        },
+        "credential_type": {
+          "type": "string",
+          "description": "The type of credential stored.",
+          "enum": ["api_key", "oauth2", "basic", "bearer_token"]
+        },
+        "credential_id": {
+          "type": "string",
+          "description": "Internal identifier for the stored credential in the vault."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status of the credential.",
+          "enum": ["active", "expired", "revoked"]
+        }
+      }
+    },
+    "RateLimit": {
+      "type": "object",
+      "description": "Rate limiting configuration for agent API requests.",
+      "properties": {
+        "requests_per_minute": {
+          "type": "integer",
+          "description": "Maximum number of requests allowed per minute.",
+          "minimum": 1
+        },
+        "requests_per_day": {
+          "type": "integer",
+          "description": "Maximum number of requests allowed per day.",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}
