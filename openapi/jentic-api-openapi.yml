@@ -26,14 +26,14 @@ tags:
   - name: Authentication
     description: >-
       Registration and API key management for accessing the Jentic platform.
-  - name: Search
-    description: >-
-      Search the Jentic catalog for APIs and workflows matching natural language
-      queries. Returns semantically ranked operations from the API catalog.
   - name: Execution
     description: >-
       Load execution details and execute API operations and workflows with
       managed authentication and credential injection.
+  - name: Search
+    description: >-
+      Search the Jentic catalog for APIs and workflows matching natural language
+      queries. Returns semantically ranked operations from the API catalog.
 security:
   - apiKeyAuth: []
 paths:

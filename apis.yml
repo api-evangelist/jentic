@@ -5,12 +5,12 @@ apis:
   - aid: jentic:jentic
     name: Jentic
     tags:
-      - Workflows
-      - Integrations
       - AI Agents
+      - Arazzo
+      - Integrations
       - MCP
       - OpenAPI
-      - Arazzo
+      - Workflows
     humanURL: https://jentic.com/
     properties:
       - url: https://jentic.com/
@@ -35,12 +35,12 @@ apis:
       loading.
 name: Jentic
 tags:
-  - Workflows
-  - Integrations
   - AI Agents
+  - Arazzo
+  - Integrations
   - MCP
   - OpenAPI
-  - Arazzo
+  - Workflows
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
