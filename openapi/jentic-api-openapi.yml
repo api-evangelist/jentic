@@ -40,7 +40,7 @@ paths:
   /auth/register:
     post:
       operationId: registerAccount
-      summary: Register a new account
+      summary: Jentic Register a new account
       description: >-
         Registers a new account with the Jentic platform and returns an API key.
         An optional email address can be provided to receive higher rate limits.
@@ -77,7 +77,7 @@ paths:
   /agents/search:
     post:
       operationId: searchApis
-      summary: Search for APIs and workflows
+      summary: Jentic Search for APIs and workflows
       description: >-
         Searches the Jentic catalog for APIs and workflows that match the
         provided natural language query. Results are semantically ranked based
@@ -120,7 +120,7 @@ paths:
   /agents/load:
     post:
       operationId: loadExecutionInfo
-      summary: Load execution information for operations
+      summary: Jentic Load execution information for operations
       description: >-
         Retrieves detailed specifications for one or more API operations or
         workflows from the Jentic catalog. Returns the full specification
@@ -163,7 +163,7 @@ paths:
   /agents/execute:
     post:
       operationId: executeOperation
-      summary: Execute an API operation or workflow
+      summary: Jentic Execute an API operation or workflow
       description: >-
         Executes a specific API operation or workflow through the Jentic
         platform. Credentials for the upstream API are injected server-side by

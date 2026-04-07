@@ -127,15 +127,12 @@ segments:
   - AI Agents
   - Integrations
 description: >-
-  Jentic is an AI infrastructure company building the agentic knowledge layer
-  for APIs. Founded in late 2024 and backed by $4.5M in pre-seed funding, Jentic
-  enables enterprises to confidently manage, scale, and govern AI agent
-  initiatives in one unified platform built on open standards. The platform
-  provides secure execution, managed authentication, unified permissions, and
-  observability for AI agents accessing over 1500 APIs and 2000 workflows. Jentic
-  is a member of the OpenAPI Initiative and builds on OpenAPI and Arazzo
-  specifications to deliver standards-based, deterministic API workflows for AI
-  agents.
+  Jentic is an AI infrastructure company building the agentic knowledge layer for
+  APIs. Founded in late 2024 and backed by $4.5M in pre-seed funding, Jentic enables
+  enterprises to confidently manage, scale, and govern AI agent initiatives in one
+  unified platform built on open standards. The platform provides secure execution,
+  managed authentication, unified permissions, and observability for AI agents accessing
+  over 1500 APIs and 2000 workflows.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
