@@ -16,7 +16,7 @@ Jentic is an AI infrastructure company building the agentic knowledge layer for 
 ## Timestamps
 
 - **Created:** 2026-01-02
-- **Modified:** 2026-03-24
+- **Modified:** 2026-04-28
 
 ## APIs
 

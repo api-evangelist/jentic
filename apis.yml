@@ -120,7 +120,7 @@ common:
   - url: json-schema/jentic-agent-schema.json
     type: JSONSchema
 created: '2026-01-02'
-modified: '2026-03-24'
+modified: '2026-04-28'
 position: Consumer
 segments:
   - Workflows
