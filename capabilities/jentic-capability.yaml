@@ -1,0 +1,165 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Jentic API
+  description: 'The Jentic API enables AI agents to dynamically discover, load, and execute APIs and workflows through a standards-based
+    platform. The API provides three core operations: searching the Jentic catalog for relevant APIs and workflows using natural
+    language queries, loading detailed execution information including input schemas and authentication requirements, and
+    executing operations with managed authentication and credential injection. Built on OpenAPI and Arazzo specifications,
+    the platform offers access to over 1500 APIs and 2000 agent-ready workflows with secure, server-side credential manag'
+  tags:
+  - Jentic
+  - API
+  created: '2026-05-06'
+  modified: '2026-05-06'
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com/api/v1
+    description: Jentic API HTTP API.
+    authentication:
+      type: apikey
+      in: header
+      name: X-JENTIC-API-KEY
+      value: '{{JENTIC_TOKEN}}'
+    resources:
+    - name: auth-register
+      path: /auth/register
+      operations:
+      - name: registeraccount
+        method: POST
+        description: Jentic Register a new account
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Jentic Search for APIs and workflows
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Jentic Load execution information for operations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Jentic Execute an API operation or workflow
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  exposes:
+  - type: rest
+    port: 8080
+    namespace: jentic-rest
+    description: REST adapter for Jentic API.
+    resources:
+    - path: /auth/register
+      name: registeraccount
+      operations:
+      - method: POST
+        name: registeraccount
+        description: Jentic Register a new account
+        call: jentic.registeraccount
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /agents/search
+      name: searchapis
+      operations:
+      - method: POST
+        name: searchapis
+        description: Jentic Search for APIs and workflows
+        call: jentic.searchapis
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /agents/load
+      name: loadexecutioninfo
+      operations:
+      - method: POST
+        name: loadexecutioninfo
+        description: Jentic Load execution information for operations
+        call: jentic.loadexecutioninfo
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /agents/execute
+      name: executeoperation
+      operations:
+      - method: POST
+        name: executeoperation
+        description: Jentic Execute an API operation or workflow
+        call: jentic.executeoperation
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9090
+    namespace: jentic-mcp
+    transport: http
+    description: MCP adapter for Jentic API for AI agent use.
+    tools:
+    - name: registeraccount
+      description: Jentic Register a new account
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: jentic.registeraccount
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: searchapis
+      description: Jentic Search for APIs and workflows
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: jentic.searchapis
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: loadexecutioninfo
+      description: Jentic Load execution information for operations
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: jentic.loadexecutioninfo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: executeoperation
+      description: Jentic Execute an API operation or workflow
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: jentic.executeoperation
+      outputParameters:
+      - type: object
+        mapping: $.
+binds:
+- namespace: env
+  keys:
+    JENTIC_TOKEN: JENTIC_TOKEN
