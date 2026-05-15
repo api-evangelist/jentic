@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/jentic/main/json-schema/jentic-workflow-schema.json",
+  "title": "Jentic Workflow",
+  "description": "A multi-step Arazzo workflow as exposed through the Jentic catalog. Workflows are deterministic recipes that chain one or more OpenAPI operations with parameter passing, conditional steps, and managed authentication. Built on the OpenAPI Arazzo specification.",
+  "type": "object",
+  "required": ["uuid", "name", "type"],
+  "properties": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^wf_.+",
+      "description": "Globally unique Jentic workflow identifier. Workflows are always prefixed `wf_`."
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "api_name": {
+      "type": "string",
+      "description": "Primary API the workflow is associated with."
+    },
+    "type": {
+      "type": "string",
+      "const": "workflow"
+    },
+    "spec": {
+      "type": "string",
+      "const": "arazzo",
+      "description": "All Jentic workflows are described in the OpenAPI Arazzo specification."
+    },
+    "steps": {
+      "type": "array",
+      "description": "Ordered list of Arazzo steps that make up the workflow.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stepId": { "type": "string" },
+          "operationId": { "type": "string" },
+          "parameters": { "type": "object", "additionalProperties": true },
+          "successCriteria": { "type": "array", "items": { "type": "object" } }
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "description": "JSON Schema for the workflow's top-level inputs.",
+      "additionalProperties": true
+    },
+    "auth_required": {
+      "type": "boolean"
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "additionalProperties": false
+}

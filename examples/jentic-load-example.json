@@ -1,0 +1,40 @@
+{
+  "operation": "loadExecutionInfo",
+  "method": "POST",
+  "path": "/agents/load",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json",
+      "X-JENTIC-API-KEY": "jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c"
+    },
+    "body": {
+      "ids": [
+        "op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c"
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "tool_info": {
+        "op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c": {
+          "name": "Send Gmail Message",
+          "description": "Sends an email through the authenticated user's Gmail account.",
+          "method": "POST",
+          "path": "/gmail/v1/users/me/messages/send",
+          "auth_required": true,
+          "inputs": {
+            "type": "object",
+            "required": ["to", "subject", "body"],
+            "properties": {
+              "to": { "type": "string", "format": "email" },
+              "subject": { "type": "string" },
+              "body": { "type": "string" },
+              "cc": { "type": "array", "items": { "type": "string", "format": "email" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

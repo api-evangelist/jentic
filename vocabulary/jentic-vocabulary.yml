@@ -1,0 +1,150 @@
+vocabulary: Jentic
+version: '1.0'
+provider: Jentic
+providerId: jentic
+description: >-
+  Operational and capability vocabulary for the Jentic agentic knowledge
+  layer. Captures the canonical concepts the platform exposes
+  (agents, operations, Arazzo workflows, MCP tools, JITT, credential
+  vault, JAIRF) and aligns them with the open standards Jentic is built
+  on (OpenAPI 3.x, OpenAPI Arazzo, Model Context Protocol).
+created: '2026-05-15'
+modified: '2026-05-15'
+tags:
+  - AI Agents
+  - Arazzo
+  - OpenAPI
+  - MCP
+  - Workflows
+  - Vocabulary
+concepts:
+  - id: agent
+    label: Agent
+    definition: >-
+      A registered Jentic consumer with a scoped API key. Agents are the
+      principals that invoke search, load, and execute operations.
+    related:
+      - api_key
+      - scope
+      - credential_vault
+  - id: api_key
+    label: Agent API Key
+    definition: >-
+      An agent-scoped credential, header X-JENTIC-API-KEY, environment
+      variable JENTIC_AGENT_API_KEY. Authorizes access only to APIs and
+      workflows in the agent's scope.
+  - id: scope
+    label: Agent Scope
+    definition: >-
+      The explicit allow-list of APIs, operations, and workflows an agent
+      may call. The scope is enforced server-side by Jentic.
+  - id: operation
+    label: Operation
+    definition: >-
+      An atomic OpenAPI operation in the Jentic catalog. UUIDs are
+      prefixed `op_`.
+    aligns:
+      - openapi:Operation
+  - id: workflow
+    label: Arazzo Workflow
+    definition: >-
+      A multi-step deterministic recipe described in the OpenAPI Arazzo
+      specification. UUIDs are prefixed `wf_`.
+    aligns:
+      - arazzo:Workflow
+  - id: capability
+    label: Capability
+    definition: >-
+      A consumer-facing label that maps a natural-language goal onto one
+      or more operations and workflows in the Jentic catalog.
+  - id: jitt
+    label: Just In Time Tooling (JITT)
+    definition: >-
+      Pattern of loading tools on demand instead of preloading all
+      possible tools into the agent's context. Reduces hallucination and
+      keeps context small at scale.
+  - id: catalog
+    label: Catalog
+    definition: >-
+      The Jentic Public APIs catalog — 1,500+ APIs and 2,000+ Arazzo
+      workflows, open-sourced as the jentic-public-apis repository.
+  - id: credential_vault
+    label: Credential Vault
+    definition: >-
+      Server-side store of upstream API credentials, injected at
+      execution time. Agents never see the raw secrets.
+  - id: execution
+    label: Execution
+    definition: >-
+      One invocation of an operation or workflow. Returns an
+      execution_id, a status (success|error), and output.
+  - id: mcp
+    label: Model Context Protocol
+    definition: >-
+      The open protocol Jentic uses to expose its catalog to coding
+      assistants and other AI clients. Hosted at
+      https://api.jentic.com/mcp.
+    aligns:
+      - mcp:Tool
+      - mcp:Resource
+  - id: arazzo_runner
+    label: Arazzo Runner
+    definition: >-
+      Open-source Python engine (pip install arazzo-runner) that
+      executes Arazzo workflows alongside OpenAPI specs. Also embedded
+      server-side in the Jentic platform.
+  - id: standard_agent
+    label: Standard Agent
+    definition: >-
+      Open-source ReWOO-style reasoning agent preconfigured with Jentic
+      tools. Primary class ReWOOAgent.
+  - id: jentic_mini
+    label: Jentic Mini
+    definition: >-
+      Free self-hosted execution layer for agents that want to keep
+      execution local.
+  - id: jairf
+    label: Jentic API AI-Readiness Framework
+    definition: >-
+      Technical specification for scoring how interpretable, operable,
+      and trustworthy an API is for AI systems. Used by the Jentic API
+      Scorecard product.
+services:
+  - id: jentic-api
+    label: Jentic API
+    type: rest
+  - id: jentic-mcp
+    label: Jentic Remote MCP
+    type: mcp
+  - id: jentic-mini
+    label: Jentic Mini
+    type: self-hosted
+tools:
+  - id: search_apis
+    label: search_apis
+    type: mcp-tool
+  - id: load_execution_info
+    label: load_execution_info
+    type: mcp-tool
+  - id: execute
+    label: execute
+    type: mcp-tool
+  - id: list_credentials
+    label: list_credentials
+    type: mcp-resource
+standards:
+  - id: openapi
+    label: OpenAPI 3.x
+    url: https://spec.openapis.org/oas/v3.1.0
+  - id: arazzo
+    label: OpenAPI Arazzo 1.0
+    url: https://spec.openapis.org/arazzo/v1.0.0
+  - id: mcp
+    label: Model Context Protocol
+    url: https://modelcontextprotocol.io/
+  - id: rfc9457
+    label: RFC 9457 Problem Details
+    url: https://datatracker.ietf.org/doc/html/rfc9457
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

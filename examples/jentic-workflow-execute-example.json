@@ -1,0 +1,39 @@
+{
+  "operation": "executeOperation",
+  "method": "POST",
+  "path": "/agents/execute",
+  "scenario": "Execute a multi-step Arazzo workflow",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json",
+      "X-JENTIC-API-KEY": "jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c"
+    },
+    "body": {
+      "execution_type": "workflow",
+      "uuid": "wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60",
+      "inputs": {
+        "city": "Dublin",
+        "cuisine": "italian",
+        "party_size": 2
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "status": "success",
+      "execution_id": "exec_01HXB1JZGE6N0XP9CKHR1Q3WTC",
+      "output": {
+        "restaurant": {
+          "name": "Pinocchio Temple Bar",
+          "address": "Wellington Quay, Dublin 2, Ireland",
+          "rating": 4.4
+        },
+        "reservation": {
+          "confirmation_code": "DUB-IT-7821",
+          "time": "2026-05-18T19:30:00Z"
+        }
+      }
+    }
+  }
+}

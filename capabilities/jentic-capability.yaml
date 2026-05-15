@@ -1,165 +1,144 @@
 naftiko: 1.0.0-alpha2
 info:
   label: Jentic API
-  description: 'The Jentic API enables AI agents to dynamically discover, load, and execute APIs and workflows through a standards-based
-    platform. The API provides three core operations: searching the Jentic catalog for relevant APIs and workflows using natural
-    language queries, loading detailed execution information including input schemas and authentication requirements, and
-    executing operations with managed authentication and credential injection. Built on OpenAPI and Arazzo specifications,
-    the platform offers access to over 1500 APIs and 2000 agent-ready workflows with secure, server-side credential manag'
+  description: >-
+    Base capability that consumes the Jentic hosted API and re-exposes it
+    over REST and MCP. Provides the canonical search → load → execute
+    surface for any agent (Standard Agent, ReWOO, Cursor, Claude Desktop,
+    ChatGPT, custom Python/TypeScript) to reach the Jentic catalog of
+    1,500+ APIs and 2,000+ Arazzo workflows behind a single
+    agent-scoped API key.
   tags:
-  - Jentic
-  - API
-  created: '2026-05-06'
-  modified: '2026-05-06'
+    - Jentic
+    - AI Agents
+    - Arazzo
+    - MCP
+    - OpenAPI
+  created: '2026-05-15'
+  modified: '2026-05-15'
 capability:
   consumes:
-  - type: http
-    namespace: jentic
-    baseUri: https://api.jentic.com/api/v1
-    description: Jentic API HTTP API.
-    authentication:
-      type: apikey
-      in: header
-      name: X-JENTIC-API-KEY
-      value: '{{JENTIC_TOKEN}}'
-    resources:
-    - name: auth-register
-      path: /auth/register
-      operations:
-      - name: registeraccount
-        method: POST
-        description: Jentic Register a new account
-        outputRawFormat: json
-        outputParameters:
-        - name: result
-          type: object
-          value: $.
-    - name: agents-search
-      path: /agents/search
-      operations:
-      - name: searchapis
-        method: POST
-        description: Jentic Search for APIs and workflows
-        outputRawFormat: json
-        outputParameters:
-        - name: result
-          type: object
-          value: $.
-    - name: agents-load
-      path: /agents/load
-      operations:
-      - name: loadexecutioninfo
-        method: POST
-        description: Jentic Load execution information for operations
-        outputRawFormat: json
-        outputParameters:
-        - name: result
-          type: object
-          value: $.
-    - name: agents-execute
-      path: /agents/execute
-      operations:
-      - name: executeoperation
-        method: POST
-        description: Jentic Execute an API operation or workflow
-        outputRawFormat: json
-        outputParameters:
-        - name: result
-          type: object
-          value: $.
+    - type: http
+      namespace: jentic
+      baseUri: https://api.jentic.com/api/v1
+      description: Jentic hosted agent control plane.
+      authentication:
+        type: apikey
+        in: header
+        name: X-JENTIC-API-KEY
+        value: '{{JENTIC_AGENT_API_KEY}}'
+      resources:
+        - name: auth-register
+          path: /auth/register
+          operations:
+            - name: registerAccount
+              method: POST
+              description: Register a new Jentic account and mint an API key.
+              outputRawFormat: json
+              outputParameters:
+                - name: api_key
+                  type: string
+                  value: $.api_key
+                - name: uuid
+                  type: string
+                  value: $.uuid
+        - name: agents-search
+          path: /agents/search
+          operations:
+            - name: searchApis
+              method: POST
+              description: Semantic search over the Jentic catalog.
+              outputRawFormat: json
+              outputParameters:
+                - name: results
+                  type: array
+                  value: $.results
+        - name: agents-load
+          path: /agents/load
+          operations:
+            - name: loadExecutionInfo
+              method: POST
+              description: Load full execution spec for one or more UUIDs.
+              outputRawFormat: json
+              outputParameters:
+                - name: tool_info
+                  type: object
+                  value: $.tool_info
+        - name: agents-execute
+          path: /agents/execute
+          operations:
+            - name: executeOperation
+              method: POST
+              description: Execute an operation or Arazzo workflow.
+              outputRawFormat: json
+              outputParameters:
+                - name: output
+                  type: object
+                  value: $.output
+                - name: status
+                  type: string
+                  value: $.status
+                - name: execution_id
+                  type: string
+                  value: $.execution_id
   exposes:
-  - type: rest
-    port: 8080
-    namespace: jentic-rest
-    description: REST adapter for Jentic API.
-    resources:
-    - path: /auth/register
-      name: registeraccount
-      operations:
-      - method: POST
-        name: registeraccount
-        description: Jentic Register a new account
-        call: jentic.registeraccount
-        outputParameters:
-        - type: object
-          mapping: $.
-    - path: /agents/search
-      name: searchapis
-      operations:
-      - method: POST
-        name: searchapis
-        description: Jentic Search for APIs and workflows
-        call: jentic.searchapis
-        outputParameters:
-        - type: object
-          mapping: $.
-    - path: /agents/load
-      name: loadexecutioninfo
-      operations:
-      - method: POST
-        name: loadexecutioninfo
-        description: Jentic Load execution information for operations
-        call: jentic.loadexecutioninfo
-        outputParameters:
-        - type: object
-          mapping: $.
-    - path: /agents/execute
-      name: executeoperation
-      operations:
-      - method: POST
-        name: executeoperation
-        description: Jentic Execute an API operation or workflow
-        call: jentic.executeoperation
-        outputParameters:
-        - type: object
-          mapping: $.
-  - type: mcp
-    port: 9090
-    namespace: jentic-mcp
-    transport: http
-    description: MCP adapter for Jentic API for AI agent use.
-    tools:
-    - name: registeraccount
-      description: Jentic Register a new account
-      hints:
-        readOnly: false
-        destructive: false
-        idempotent: false
-      call: jentic.registeraccount
-      outputParameters:
-      - type: object
-        mapping: $.
-    - name: searchapis
-      description: Jentic Search for APIs and workflows
-      hints:
-        readOnly: false
-        destructive: false
-        idempotent: false
-      call: jentic.searchapis
-      outputParameters:
-      - type: object
-        mapping: $.
-    - name: loadexecutioninfo
-      description: Jentic Load execution information for operations
-      hints:
-        readOnly: false
-        destructive: false
-        idempotent: false
-      call: jentic.loadexecutioninfo
-      outputParameters:
-      - type: object
-        mapping: $.
-    - name: executeoperation
-      description: Jentic Execute an API operation or workflow
-      hints:
-        readOnly: false
-        destructive: false
-        idempotent: false
-      call: jentic.executeoperation
-      outputParameters:
-      - type: object
-        mapping: $.
+    - type: rest
+      port: 8080
+      namespace: jentic-rest
+      description: REST adapter over the Jentic API.
+      resources:
+        - path: /auth/register
+          name: registerAccount
+          operations:
+            - method: POST
+              name: registerAccount
+              call: jentic.registerAccount
+        - path: /agents/search
+          name: searchApis
+          operations:
+            - method: POST
+              name: searchApis
+              call: jentic.searchApis
+        - path: /agents/load
+          name: loadExecutionInfo
+          operations:
+            - method: POST
+              name: loadExecutionInfo
+              call: jentic.loadExecutionInfo
+        - path: /agents/execute
+          name: executeOperation
+          operations:
+            - method: POST
+              name: executeOperation
+              call: jentic.executeOperation
+    - type: mcp
+      port: 9090
+      namespace: jentic-mcp
+      transport: http
+      description: MCP adapter exposing Jentic tools to MCP-capable clients.
+      tools:
+        - name: search_apis
+          description: Search the Jentic catalog by natural language.
+          hints:
+            readOnly: true
+            destructive: false
+            idempotent: true
+          call: jentic.searchApis
+        - name: load_execution_info
+          description: Load schema and auth requirements for one or more UUIDs.
+          hints:
+            readOnly: true
+            destructive: false
+            idempotent: true
+          call: jentic.loadExecutionInfo
+        - name: execute
+          description: Execute an operation or Arazzo workflow.
+          hints:
+            readOnly: false
+            destructive: true
+            idempotent: false
+          call: jentic.executeOperation
 binds:
-- namespace: env
-  keys:
-    JENTIC_TOKEN: JENTIC_TOKEN
+  - namespace: env
+    keys:
+      JENTIC_AGENT_API_KEY: JENTIC_AGENT_API_KEY

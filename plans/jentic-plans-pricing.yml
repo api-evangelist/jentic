@@ -4,139 +4,172 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Jentic
 providerId: jentic
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-15'
+reconciled: false
+notes: >-
+  Jentic publishes a two-edition pricing page (jentic.com/pricing): Core
+  Edition (free) and Enterprise Edition (contact sales). Specific quotas,
+  rate limits, agent counts, seat counts, and overage rates are not
+  publicly disclosed for either edition. Free tier defaults for API
+  request quota and rate limit below are scaffold values inferred from
+  the public docs' references to anonymous-vs-emailed rate-limit tiers
+  on /auth/register, not published numbers. Enterprise terms are entirely
+  custom-negotiated. Reconcile against a live quote / Jentic order form
+  before treating these numbers as authoritative.
 tags:
   - AI Agents
   - Arazzo
-  - Integrations
-  - MCP
   - OpenAPI
+  - MCP
   - Workflows
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
+  - Integrations
+description: >-
+  Machine-readable plans and pricing for the Jentic agentic knowledge
+  layer. Two public editions: Core (free, single-user, public APIs only)
+  and Enterprise (gated, includes sandbox, private API ingestion,
+  governance, VPC deployment, SLAs, dedicated support).
 plans:
-  - id: jentic-free
-    name: Free
+  - id: jentic-core
+    name: Core Edition
     type: freemium
-    description: Free entry tier for the Jentic API surface. Intended for evaluation, prototyping, and
-      low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
+    publicUrl: https://jentic.com/pricing
+    description: >-
+      Free Core Edition for individual developers. Single-user access,
+      Jentic-managed execution for the public APIs catalog (1,500+
+      APIs), API AI-readiness diagnostics, and platform-managed
+      execution for public API integrations.
     entries:
+      - label: Seats
+        description: Single-user access only.
+        name: seats
+        type: quota
+        metric: users
+        limit: 1
+        timeFrame: account
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Public APIs Catalog
+        description: Access to all 1,500+ public APIs in the Jentic catalog.
+        name: catalog_access
+        type: quota
+        metric: apis
+        limit: -1
+        timeFrame: account
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Arazzo Workflows
+        description: Access to the public 2,000+ Arazzo workflow library.
+        name: workflows
+        type: quota
+        metric: workflows
+        limit: -1
+        timeFrame: account
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
       - label: API Requests
-        description: Monthly API request quota across all included endpoints
+        description: >-
+          Monthly request quota across /agents/search, /agents/load,
+          /agents/execute. Scaffold value — not published by Jentic.
         name: api_requests
         type: quota
         metric: requests
         limit: 1000
         timeFrame: month
         geo: global
-        domains: []
         unit: 1
         price: '0.00'
         userMultiplied: false
       - label: Rate Limit
-        description: Maximum requests per minute on the free tier
+        description: Scaffold per-minute rate limit; not published by Jentic.
         name: rate_limit
         type: rate
         metric: requests_per_minute
         limit: 10
         timeFrame: minute
-        geo: global
-        domains: []
         unit: 1
         price: '0.00'
         userMultiplied: false
     elements:
       - name: Public Documentation
+      - name: API AI Readiness Diagnostics
+      - name: Platform Managed Execution
+      - name: Public APIs Catalog (1,500+)
+      - name: Arazzo Workflow Library (2,000+)
+      - name: Remote MCP Server
       - name: Community Support
-      - name: Sandbox Access
-      - name: Jentic
-  - id: jentic-pro
-    name: Professional
-    type: paid
-    description: Production tier for Jentic. Provides higher quotas, priority support, and access to the
-      broader API portfolio. Pricing placeholder; align with the provider's pricing page.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1
-        price: TBD
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 100
-        timeFrame: minute
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
-        name: overage
-        type: metered
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1000
-        price: TBD
-        userMultiplied: false
-    elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: Jentic
+      - name: Standard Agent (Open Source)
+      - name: Arazzo Runner (Open Source)
+      - name: Jentic Mini (Self Hosted)
   - id: jentic-enterprise
-    name: Enterprise
+    name: Enterprise Edition
     type: enterprise
-    description: Custom-negotiated tier for Jentic. Includes dedicated capacity, contractual SLAs, security
-      review, data residency options, and named technical account management.
+    publicUrl: https://jentic.com/pricing
+    pricingGated: true
+    description: >-
+      Contact-sales tier. Adds the Agentic Sandbox for safe behavior
+      capture and validation, automated workflow discovery and
+      generation, governance and integration controls, private API
+      ingestion and management, organization-level accounts and access
+      controls, SLAs, flexible hosting (customer-managed environments
+      and VPC deployment), and premium support with a dedicated Slack
+      channel and account manager. Specific quotas are negotiated.
     entries:
+      - label: Seats
+        description: Negotiated organization-level seat count.
+        name: seats
+        type: quota
+        metric: users
+        limit: -1
+        timeFrame: contract
+        unit: 1
+        price: custom
+        userMultiplied: true
       - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
+        description: Negotiated request volume; uncapped subject to fair use.
         name: api_requests
         type: quota
         metric: requests
         limit: -1
         timeFrame: month
         geo: configurable
-        domains: []
         unit: 1
         price: custom
         userMultiplied: false
       - label: Rate Limit
-        description: Negotiated burst and steady-state rate
+        description: Negotiated burst and steady-state rate.
         name: rate_limit
         type: rate
         metric: requests_per_minute
         limit: 1000
         timeFrame: minute
-        geo: configurable
-        domains: []
+        unit: 1
+        price: custom
+        userMultiplied: false
+      - label: Private API Ingestion
+        description: Ingest and operate private/internal APIs.
+        name: private_apis
+        type: quota
+        metric: apis
+        limit: -1
+        timeFrame: contract
         unit: 1
         price: custom
         userMultiplied: false
     elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
+      - name: Everything In Core Edition
+      - name: Agentic Sandbox
+      - name: Automated Workflow Discovery And Generation
+      - name: Governance And Integration Controls
+      - name: Private API Ingestion And Management
+      - name: Organization Level Accounts And Access Controls
+      - name: Service Level Agreements
+      - name: Flexible Hosting (Customer Managed / VPC)
+      - name: Premium Support
+      - name: Dedicated Slack Channel
       - name: Dedicated Account Manager
-      - name: Custom Data Residency
-      - name: Jentic
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

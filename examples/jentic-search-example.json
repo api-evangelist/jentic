@@ -1,0 +1,46 @@
+{
+  "operation": "searchApis",
+  "method": "POST",
+  "path": "/agents/search",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json",
+      "X-JENTIC-API-KEY": "jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c"
+    },
+    "body": {
+      "query": "send an email",
+      "limit": 3
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "results": [
+        {
+          "uuid": "op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c",
+          "name": "Send Gmail Message",
+          "description": "Sends an email through the authenticated user's Gmail account.",
+          "api_name": "Gmail",
+          "type": "operation",
+          "score": 0.94
+        },
+        {
+          "uuid": "wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60",
+          "name": "Compose Then Send Email Workflow",
+          "description": "Drafts a message, asks for confirmation, then sends it.",
+          "api_name": "Gmail",
+          "type": "workflow",
+          "score": 0.88
+        },
+        {
+          "uuid": "op_4ab3120fe9f54d4caea5dcde0fb6c2b1",
+          "name": "Send SendGrid Email",
+          "description": "Sends a transactional email through SendGrid.",
+          "api_name": "SendGrid",
+          "type": "operation",
+          "score": 0.81
+        }
+      ]
+    }
+  }
+}

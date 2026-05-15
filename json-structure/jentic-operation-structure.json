@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-structure.org/structure/v1",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/jentic/main/json-structure/jentic-operation-structure.json",
+  "title": "Jentic Operation Structure",
+  "description": "Structural model of a Jentic operation/workflow record across the search, load, and execute surfaces. Models the relationship between Agent → Search Result → Tool Info → Execution Request → Execution Response so that downstream consumers can reason about agent invocations end-to-end.",
+  "version": "1.0.0",
+  "types": {
+    "Agent": {
+      "type": "object",
+      "fields": {
+        "uuid": "string",
+        "api_key": "string",
+        "scope": "AgentScope"
+      }
+    },
+    "AgentScope": {
+      "type": "object",
+      "fields": {
+        "apis": "array<string>",
+        "operations": "array<string>",
+        "workflows": "array<string>"
+      }
+    },
+    "SearchQuery": {
+      "type": "object",
+      "fields": {
+        "query": "string",
+        "limit": "integer"
+      }
+    },
+    "SearchResult": {
+      "type": "object",
+      "fields": {
+        "uuid": "string",
+        "name": "string",
+        "description": "string",
+        "api_name": "string",
+        "type": "enum<operation|workflow>",
+        "score": "number"
+      }
+    },
+    "ToolInfo": {
+      "type": "object",
+      "fields": {
+        "name": "string",
+        "description": "string",
+        "method": "enum<GET|POST|PUT|PATCH|DELETE>",
+        "path": "string",
+        "inputs": "json-schema",
+        "auth_required": "boolean"
+      }
+    },
+    "ExecutionRequest": {
+      "type": "object",
+      "fields": {
+        "execution_type": "enum<operation|workflow>",
+        "uuid": "string",
+        "inputs": "object"
+      }
+    },
+    "ExecutionResponse": {
+      "type": "object",
+      "fields": {
+        "execution_id": "string",
+        "status": "enum<success|error>",
+        "output": "object"
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "Agent",
+      "to": "SearchQuery",
+      "kind": "issues",
+      "cardinality": "1..N"
+    },
+    {
+      "from": "SearchQuery",
+      "to": "SearchResult",
+      "kind": "returns",
+      "cardinality": "1..N"
+    },
+    {
+      "from": "SearchResult",
+      "to": "ToolInfo",
+      "kind": "hydrates-into",
+      "cardinality": "1..1",
+      "via": "/agents/load"
+    },
+    {
+      "from": "ToolInfo",
+      "to": "ExecutionRequest",
+      "kind": "schema-for",
+      "cardinality": "1..N"
+    },
+    {
+      "from": "ExecutionRequest",
+      "to": "ExecutionResponse",
+      "kind": "produces",
+      "cardinality": "1..1",
+      "via": "/agents/execute"
+    }
+  ]
+}

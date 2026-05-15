@@ -1,0 +1,87 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Agent Tool Discovery
+  description: >-
+    Capability that gives an agent just-in-time tool discovery against the
+    Jentic catalog. Instead of preloading thousands of tool definitions
+    into the context window, the agent calls search_apis with a natural
+    language goal, receives a small ranked set of operation and workflow
+    UUIDs, then loads only the chosen ones. The capability translates
+    Jentic's load response into a tool format consumable by Anthropic or
+    OpenAI tool-calling.
+  tags:
+    - Just In Time Tooling
+    - Tool Discovery
+    - AI Agents
+    - Jentic
+    - JITT
+  created: '2026-05-15'
+  modified: '2026-05-15'
+capability:
+  consumes:
+    - type: http
+      namespace: jentic
+      baseUri: https://api.jentic.com/api/v1
+      authentication:
+        type: apikey
+        in: header
+        name: X-JENTIC-API-KEY
+        value: '{{JENTIC_AGENT_API_KEY}}'
+      resources:
+        - name: agents-search
+          path: /agents/search
+          operations:
+            - name: discoverTools
+              method: POST
+              description: Discover tools matching a natural language need.
+              outputRawFormat: json
+              outputParameters:
+                - name: results
+                  type: array
+                  value: $.results
+        - name: agents-load
+          path: /agents/load
+          operations:
+            - name: hydrateTools
+              method: POST
+              description: Hydrate one or more UUIDs into full tool definitions.
+              outputRawFormat: json
+              outputParameters:
+                - name: tool_info
+                  type: object
+                  value: $.tool_info
+  exposes:
+    - type: mcp
+      port: 9090
+      namespace: jentic-discovery-mcp
+      transport: http
+      description: MCP adapter for just-in-time tool discovery.
+      tools:
+        - name: discover_tools
+          description: >-
+            Search the Jentic catalog for tools matching the user's goal.
+            Returns lightweight UUIDs and descriptions only — does not
+            inflate the agent context.
+          hints:
+            readOnly: true
+            destructive: false
+            idempotent: true
+          call: jentic.discoverTools
+        - name: hydrate_tools
+          description: >-
+            Hydrate selected UUIDs into full tool definitions ready for
+            Anthropic or OpenAI tool-calling.
+          hints:
+            readOnly: true
+            destructive: false
+            idempotent: true
+          call: jentic.hydrateTools
+  formats:
+    - name: anthropic
+      description: Hydrated tools rendered as Anthropic tool definitions.
+    - name: openai
+      description: Hydrated tools rendered as OpenAI function definitions.
+binds:
+  - namespace: env
+    keys:
+      JENTIC_AGENT_API_KEY: JENTIC_AGENT_API_KEY

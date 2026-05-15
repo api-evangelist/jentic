@@ -1,0 +1,32 @@
+{
+  "operation": "executeOperation",
+  "method": "POST",
+  "path": "/agents/execute",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json",
+      "X-JENTIC-API-KEY": "jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c"
+    },
+    "body": {
+      "execution_type": "operation",
+      "uuid": "op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c",
+      "inputs": {
+        "to": "friend@example.com",
+        "subject": "Hello from a Jentic agent",
+        "body": "This message was sent by an autonomous agent via Jentic."
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "status": "success",
+      "execution_id": "exec_01HXAYK3Q5N4D6PA7QFRJK1WTC",
+      "output": {
+        "messageId": "1932af0d-21c4-4a91-9c4e-3e2a9f1c0d11",
+        "threadId": "184a9b1eef9a2c11",
+        "labels": ["SENT"]
+      }
+    }
+  }
+}

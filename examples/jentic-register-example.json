@@ -1,0 +1,20 @@
+{
+  "operation": "registerAccount",
+  "method": "POST",
+  "path": "/auth/register",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "email": "agent-owner@example.com"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "api_key": "jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c",
+      "uuid": "7c3e8d10-6b9a-4f5d-8e21-1a7c4b9d0fe2"
+    }
+  }
+}

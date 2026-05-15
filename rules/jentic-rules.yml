@@ -1,0 +1,151 @@
+extends:
+  - spectral:oas
+
+documentationUrl: https://docs.jentic.com/
+
+functions: []
+
+rules:
+  jentic-info-title:
+    description: API title must include "Jentic".
+    severity: error
+    given: $.info.title
+    then:
+      function: pattern
+      functionOptions:
+        match: '(?i)jentic'
+
+  jentic-info-description-required:
+    description: API info.description is required and must be substantive.
+    severity: error
+    given: $.info
+    then:
+      field: description
+      function: truthy
+
+  jentic-info-contact-required:
+    description: API must have a contact entry pointing at Jentic Support.
+    severity: error
+    given: $.info.contact
+    then:
+      - field: name
+        function: truthy
+      - field: url
+        function: truthy
+
+  jentic-server-url-https:
+    description: All server URLs must use HTTPS.
+    severity: error
+    given: $.servers[*].url
+    then:
+      function: pattern
+      functionOptions:
+        match: '^https://'
+
+  jentic-server-versioned-path:
+    description: Production server path must include the /api/v1 prefix.
+    severity: warn
+    given: $.servers[?(@.description == 'Production')].url
+    then:
+      function: pattern
+      functionOptions:
+        match: '/api/v1'
+
+  jentic-operation-id-camel-case:
+    description: operationId must be camelCase.
+    severity: error
+    given: $.paths.*.*.operationId
+    then:
+      function: pattern
+      functionOptions:
+        match: '^[a-z][a-zA-Z0-9]+$'
+
+  jentic-summary-title-case:
+    description: Operation summaries must use Title Case.
+    severity: warn
+    given: $.paths.*.*.summary
+    then:
+      function: pattern
+      functionOptions:
+        match: '^([A-Z][a-zA-Z0-9]*)(\s+([A-Z][a-zA-Z0-9]*|A|An|And|As|At|But|By|For|If|In|Of|On|Or|The|To|Up|Via))*$'
+
+  jentic-description-required:
+    description: Every operation must have a description.
+    severity: error
+    given: $.paths.*.*
+    then:
+      field: description
+      function: truthy
+
+  jentic-tags-required:
+    description: Every operation must be tagged with at least one tag.
+    severity: error
+    given: $.paths.*.*.tags
+    then:
+      function: length
+      functionOptions:
+        min: 1
+
+  jentic-tag-allowed-values:
+    description: Operation tags must come from the canonical Jentic tag set.
+    severity: warn
+    given: $.paths.*.*.tags[*]
+    then:
+      function: enumeration
+      functionOptions:
+        values:
+          - Authentication
+          - Search
+          - Execution
+
+  jentic-api-key-header:
+    description: API key auth must use the X-JENTIC-API-KEY header.
+    severity: error
+    given: $.components.securitySchemes.apiKeyAuth
+    then:
+      - field: type
+        function: pattern
+        functionOptions:
+          match: '^apiKey$'
+      - field: in
+        function: pattern
+        functionOptions:
+          match: '^header$'
+      - field: name
+        function: pattern
+        functionOptions:
+          match: '^X-JENTIC-API-KEY$'
+
+  jentic-uuid-pattern:
+    description: Operation/workflow UUID fields must enforce op_/wf_ prefix.
+    severity: warn
+    given: $.components.schemas..[?(@property === 'uuid')].pattern
+    then:
+      function: pattern
+      functionOptions:
+        match: 'op_|wf_'
+
+  jentic-error-response-schema:
+    description: 4xx/5xx responses must reference ErrorResponse.
+    severity: warn
+    given: $.paths.*.*.responses[?(@property.match(/^[45]/))].content.application/json.schema
+    then:
+      field: $ref
+      function: pattern
+      functionOptions:
+        match: 'ErrorResponse'
+
+  jentic-execution-type-enum:
+    description: ExecutionRequest.execution_type must be enum operation|workflow.
+    severity: error
+    given: $.components.schemas.ExecutionRequest.properties.execution_type.enum
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          items:
+            type: string
+            enum: [operation, workflow]
+          minItems: 2
+          maxItems: 2

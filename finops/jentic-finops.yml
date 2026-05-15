@@ -9,33 +9,51 @@ alignedWith:
 provider: Jentic
 providerId: jentic
 publisherName: Jentic
-serviceCategory: API
+serviceCategory: AI Agent Platform
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-15'
+reconciled: false
+notes: >-
+  Jentic's Enterprise Edition pricing is gated (contact sales), and the
+  Core Edition is free, so a published unit-rate card is not available.
+  Meters and unit economics below are aligned to the obvious chargeable
+  signals on the platform (workflow executions, integrations used, agent
+  runs, seats, MCP calls). Reconcile against a real Jentic order form
+  before treating rates as authoritative.
 tags:
   - AI Agents
   - Arazzo
-  - Integrations
-  - MCP
   - OpenAPI
+  - MCP
   - Workflows
   - FinOps
   - Cost Management
   - FOCUS
-description: FinOps framework definition for the Jentic API surface. Provides a FOCUS-aligned mapping
-  for cost allocation, usage measurement, and unit-economics reporting across the provider's APIs.
+description: >-
+  FinOps framework definition for the Jentic agentic knowledge layer.
+  Provides a FOCUS-aligned mapping for cost allocation, usage
+  measurement, and unit economics across the search / load / execute
+  surface, the Remote MCP server, and the Agentic Sandbox.
 principles:
   - name: Visibility
-    description: Make API consumption costs visible to engineering, product, and finance teams in near
-      real-time.
+    description: >-
+      Make AI agent consumption costs (per agent, per workflow, per
+      upstream API) visible to engineering, product, and finance in
+      near real-time via execution_id telemetry.
   - name: Allocation
-    description: Tag every chargeable API call with the consuming team, environment, application, and
-      feature so cost can be allocated.
+    description: >-
+      Every chargeable agent call is tagged with the agent UUID, scope,
+      upstream api_name, and execution_type (operation vs workflow) so
+      cost can be split across teams and features.
   - name: Optimization
-    description: Continuously evaluate request patterns, caching, batching, and tier selection to reduce
-      cost per useful unit of work.
+    description: >-
+      Continuously evaluate which goals should be Arazzo workflows
+      (cheaper, deterministic) vs free-form tool calls (more LLM
+      tokens), and which APIs are pulling disproportionate cost.
   - name: Accountability
-    description: Establish budget owners and chargeback or showback flows for each consuming team.
+    description: >-
+      Establish per-agent budget owners and chargeback or showback
+      flows. Enterprise scopes can be aligned to business cost centers.
 domains:
   - name: Understand Usage and Cost
     capabilities:
@@ -65,10 +83,11 @@ domains:
       - Onboarding Workloads
       - Intersecting Disciplines
 billingModel:
-  pricingCategory: Usage-Based
-  billingFrequency: Monthly
+  pricingCategory: Subscription Plus Usage
+  billingFrequency: Annual
   billingCurrency: USD
   chargeCategories:
+    - Subscription
     - Usage
     - Purchase
     - Tax
@@ -77,59 +96,130 @@ billingModel:
   chargeFrequency: Recurring
 focusColumns:
   ServiceName: Jentic
-  ServiceCategory: Developer Tools / API
+  ServiceCategory: AI Agent Platform
   ProviderName: Jentic
   PublisherName: Jentic
   InvoiceIssuerName: Jentic
-  PricingCategory: Usage-Based
-  PricingUnit: request
+  PricingCategory: Subscription Plus Usage
+  PricingUnit: execution
   BillingCurrency: USD
   ChargeCategory: Usage
 meters:
-  - name: api_requests
-    description: Count of billable API requests
-    unit: request
+  - name: workflow_executions
+    description: >-
+      Count of /agents/execute calls where execution_type = workflow
+      (Arazzo workflows).
+    unit: execution
     aggregation: sum
     dimensions:
-      - api
-      - endpoint
+      - agent
+      - workflow_uuid
+      - api_name
+      - status
       - tier
-      - region
-      - consumer
+  - name: operation_executions
+    description: >-
+      Count of /agents/execute calls where execution_type = operation
+      (single OpenAPI operation).
+    unit: execution
+    aggregation: sum
+    dimensions:
+      - agent
+      - operation_uuid
+      - api_name
+      - status
+      - tier
+  - name: integrations_used
+    description: >-
+      Distinct upstream APIs (api_name) actually invoked by an agent
+      during the billing period. Counts breadth, not depth.
+    unit: api
+    aggregation: count_distinct
+    dimensions:
+      - agent
+      - org
+      - tier
+  - name: agent_runs
+    description: >-
+      One end-to-end search → load → execute session, correlated by
+      execution_id chain.
+    unit: run
+    aggregation: sum
+    dimensions:
+      - agent
+      - tier
+  - name: seats
+    description: Active human operators on the Jentic console.
+    unit: user
+    aggregation: max
+    dimensions:
+      - org
+      - role
+      - tier
+  - name: mcp_calls
+    description: >-
+      Tool invocations against the Remote MCP server at
+      api.jentic.com/mcp (search_apis, load_execution_info, execute).
+    unit: call
+    aggregation: sum
+    dimensions:
+      - agent
+      - tool
+      - client
+      - tier
+  - name: search_queries
+    description: Count of /agents/search calls.
+    unit: query
+    aggregation: sum
+    dimensions:
+      - agent
+      - tier
+  - name: load_calls
+    description: Count of /agents/load calls.
+    unit: call
+    aggregation: sum
+    dimensions:
+      - agent
+      - tier
   - name: data_egress
-    description: Bytes returned over the network in API responses
+    description: Bytes returned over the network in /agents/execute responses.
     unit: GB
     aggregation: sum
     dimensions:
-      - api
-      - region
-      - consumer
-  - name: compute_seconds
-    description: Server-side compute consumed by the request, where applicable
-    unit: second
-    aggregation: sum
-    dimensions:
-      - api
-      - endpoint
-      - tier
+      - agent
+      - api_name
 apis:
-  - name: Jentic
-    baseURL: ''
+  - name: Jentic API
+    baseURL: https://api.jentic.com/api/v1
+    serviceName: Jentic API
+    serviceCategory: AI Agent Platform
     tags:
       - AI Agents
       - Arazzo
-      - Integrations
-      - MCP
       - OpenAPI
       - Workflows
-    serviceName: Jentic
-    serviceCategory: API
+  - name: Jentic Remote MCP
+    baseURL: https://api.jentic.com/mcp
+    serviceName: Jentic Remote MCP
+    serviceCategory: MCP Server
+    tags:
+      - MCP
+      - AI Agents
 unitEconomics:
-  - name: Cost per 1K Requests
-    metric: billed_cost / (api_requests / 1000)
+  - name: Cost Per Workflow Execution
+    metric: billed_cost / workflow_executions
     target: TBD
-  - name: Cost per Active Consumer
-    metric: billed_cost / active_consumers
+  - name: Cost Per Agent Run
+    metric: billed_cost / agent_runs
+    target: TBD
+  - name: Cost Per Integration Used
+    metric: billed_cost / integrations_used
+    target: TBD
+  - name: Cost Per Seat
+    metric: billed_cost / seats
+    target: TBD
+  - name: Cost Per MCP Call
+    metric: billed_cost / mcp_calls
     target: TBD
 maintainers:
   - FN: Kin Lane

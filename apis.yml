@@ -1,139 +1,477 @@
 aid: jentic
 url: >-
   https://raw.githubusercontent.com/api-evangelist/jentic/refs/heads/main/apis.yml
-apis:
-  - aid: jentic:jentic
-    name: Jentic
-    tags:
-      - AI Agents
-      - Arazzo
-      - Integrations
-      - MCP
-      - OpenAPI
-      - Workflows
-    humanURL: https://jentic.com/
-    properties:
-      - url: https://jentic.com/
-        type: Documentation
-      - url: https://docs.jentic.com/getting-started/quickstart/
-        type: GettingStarted
-      - url: https://app.jentic.com/sign-up
-        type: SignUp
-      - url: https://github.com/jentic/jentic-sdks
-        type: GitHubOrganization
-      - url: https://jentic.com/pricing
-        type: Pricing
-      - url: openapi/jentic-api-openapi.yml
-        type: OpenAPI
-    description: >-
-      Jentic enables AI agents to dynamically discover and execute APIs and
-      workflows through a standards-based, open-source catalog. With managed
-      authentication, unified permissions, and observability, agents become more
-      capable, safer, and easier to operate at scale. The platform provides
-      access to over 1500 APIs and 2000 agent-ready workflows, built on OpenAPI
-      and Arazzo specifications, with Just-In-Time Tooling for dynamic tool
-      loading.
 name: Jentic
+description: >-
+  Jentic is an AI infrastructure company building the agentic knowledge layer
+  for APIs. Founded in late 2024 and backed by $4.5M in pre-seed funding, Jentic
+  enables enterprises to confidently manage, scale, and govern AI agent
+  initiatives in a unified platform built on open standards. The platform
+  provides secure execution, managed authentication, unified permissions, and
+  observability for AI agents accessing 1,500+ public APIs and 2,000+
+  agent-ready workflows. Jentic's bet is that AI agents need a standards-based
+  control plane built on OpenAPI plus Arazzo workflows plus MCP, rather than
+  ad-hoc tool wiring inside every agent framework. The platform ships the
+  Jentic Public APIs catalog, the Arazzo Engine (workflow runner), the
+  Standard Agent (a composable ReWOO-style reasoning agent), the Jentic Mini
+  self-hosted execution layer, a hosted Remote MCP server at api.jentic.com/mcp,
+  and the Jentic API AI-Readiness Framework (JAIRF) for scoring API readiness
+  for agents.
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+type: Index
+access: 3rd-Party
+position: Consumer
+created: '2026-01-02'
+modified: '2026-05-15'
 tags:
   - AI Agents
   - Arazzo
+  - OpenAPI
+  - MCP
+  - Workflows
+  - Integrations
+  - Agent Runtime
+  - Standard Agent
+  - Just In Time Tooling
+  - Credential Vault
+  - Agent Governance
+  - Observability
+  - API AI Readiness
+segments:
+  - AI Agents
+  - Workflows
   - Integrations
   - MCP
-  - OpenAPI
-  - Workflows
-type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
-access: 3rd-Party
+  - Agent Infrastructure
+specificationVersion: '0.19'
+apis:
+  - aid: jentic:jentic-api
+    name: Jentic API
+    humanURL: https://docs.jentic.com/reference/public-apis/
+    baseURL: https://api.jentic.com/api/v1
+    description: >-
+      The Jentic API is the hosted agent control plane. It exposes a small,
+      stable surface that lets any agent dynamically discover, load, and
+      execute API operations and Arazzo workflows from the Jentic catalog.
+      Authentication uses an agent-scoped API key (X-JENTIC-API-KEY). The
+      canonical flow is search to load to execute: search the catalog by
+      natural language, load the schema and auth requirements for the
+      returned operation or workflow UUIDs, and execute with managed
+      server-side credential injection. Operation UUIDs are prefixed op_
+      and workflow UUIDs are prefixed wf_, and both are accepted by the
+      execute endpoint.
+    tags:
+      - AI Agents
+      - Arazzo
+      - OpenAPI
+      - Workflows
+      - Integrations
+      - MCP
+      - Agent Runtime
+    properties:
+      - url: https://jentic.com/
+        type: Website
+      - url: https://docs.jentic.com/
+        type: Documentation
+      - url: https://docs.jentic.com/getting-started/quickstart/
+        type: GettingStarted
+      - url: https://docs.jentic.com/reference/public-apis/
+        type: APIReference
+      - url: https://app.jentic.com/sign-up
+        type: SignUp
+      - url: https://app.jentic.com/
+        type: Console
+      - url: https://api.jentic.com/api/v1
+        type: BaseURL
+      - url: openapi/jentic-openapi.yml
+        type: OpenAPI
+      - url: capabilities/jentic-capability.yaml
+        type: NaftikoCapability
+      - url: capabilities/arazzo-workflow-execution.yaml
+        type: NaftikoCapability
+      - url: capabilities/agent-tool-discovery.yaml
+        type: NaftikoCapability
+      - url: capabilities/mcp-publishing.yaml
+        type: NaftikoCapability
+      - url: rules/jentic-rules.yml
+        type: SpectralRules
+      - url: json-schema/jentic-operation-schema.json
+        type: JSONSchema
+      - url: json-schema/jentic-agent-schema.json
+        type: JSONSchema
+      - url: json-schema/jentic-workflow-schema.json
+        type: JSONSchema
+      - url: json-structure/jentic-operation-structure.json
+        type: JSONStructure
+      - url: examples/jentic-search-example.json
+        type: Example
+      - url: examples/jentic-load-example.json
+        type: Example
+      - url: examples/jentic-execute-example.json
+        type: Example
+      - url: examples/jentic-register-example.json
+        type: Example
+    properties_authentication:
+      - name: API Key
+        scheme: apiKey
+        in: header
+        header: X-JENTIC-API-KEY
+        notes: >-
+          Agent-scoped API key obtained from the Jentic dashboard
+          (app.jentic.com) by creating an agent and clicking Generate API Key.
+          The key authorizes that agent to call only the APIs and workflows
+          permitted in its scope. Anonymous register endpoint can also mint
+          a low-rate-limit key. Set as JENTIC_AGENT_API_KEY env var when
+          using the SDK or MCP server.
+    properties_features:
+      - name: Just In Time Tooling (JITT)
+        description: >-
+          Tools are loaded on demand instead of being preloaded into every
+          agent prompt, keeping the context window small, reducing
+          hallucination, and letting a single agent reach 1,500+ APIs without
+          context bloat.
+      - name: Arazzo Workflow Execution
+        description: >-
+          Multi-step deterministic recipes defined in the OpenAPI Arazzo
+          specification. Workflows are executed server-side by the Arazzo
+          Engine with parameter chaining, conditional steps, and
+          authentication resolution.
+      - name: Managed Credential Vault
+        description: >-
+          Upstream API credentials live in the Jentic server-side vault and
+          are injected at execution time. Agents never see secrets, which
+          eliminates the classic anti-pattern of secrets in prompts or
+          tool definitions.
+      - name: Catalog Search
+        description: >-
+          Semantic, natural-language search over the public API catalog and
+          the Arazzo workflow library. Returns ranked UUIDs that can be fed
+          directly to load and execute.
+      - name: Agent Scoping
+        description: >-
+          Each agent is created with an explicit allow list of APIs and
+          workflows. The API key inherits that scope, so the same SDK call
+          cannot accidentally reach an unauthorized integration.
+      - name: Observability
+        description: >-
+          Every execution emits an execution_id and audit-grade telemetry,
+          giving enterprises a unified view of agent fleet behavior across
+          all upstream APIs.
+      - name: Open Standards
+        description: >-
+          Built on OpenAPI 3.x, the OpenAPI Arazzo workflow specification,
+          and Model Context Protocol. No proprietary tool format, so the
+          same catalog works for Cursor, Claude Desktop, ChatGPT, Windsurf,
+          VS Code, and custom Python or TypeScript agents.
+      - name: MCP First
+        description: >-
+          A hosted Remote MCP server at https://api.jentic.com/mcp exposes
+          search_apis, load_execution_info, execute, and list_credentials
+          to any MCP-capable client with OAuth or API key auth.
+    properties_useCases:
+      - name: Sandbox To Production Agents
+        description: >-
+          Build an agent against the Agentic Sandbox, validate behavior
+          without connecting to live systems, then promote to production
+          against the same Arazzo workflows.
+      - name: Multi API Agent Workflows
+        description: >-
+          Compose multi-vendor workflows like "create a Linear ticket,
+          notify Slack, log to Notion" without writing N integration
+          adapters per agent.
+      - name: Governed AI Automation
+        description: >-
+          Centralize permissions, credentials, and audit so business teams
+          can ship agents under existing IAM and security controls.
+      - name: Coding Assistant Tools
+        description: >-
+          Expose 1,500+ APIs to Cursor, Claude Desktop, Windsurf, and VS Code
+          via the Jentic Remote MCP so developers get real API actions
+          inside their IDE.
+      - name: API AI Readiness Evaluation
+        description: >-
+          Score an API against the Jentic API AI-Readiness Framework (JAIRF)
+          to know how well it will work with autonomous agents.
+    properties_integrations:
+      - name: 1500+ Public APIs Catalog
+        description: >-
+          Curated, AI-ready descriptions for 1,500+ public SaaS APIs
+          maintained in the jentic-public-apis open-source repository.
+      - name: 2000+ Agent Ready Workflows
+        description: >-
+          Pre-built Arazzo workflows covering common business automations
+          across the catalog.
+      - name: Claude Desktop
+        description: Remote MCP integration via OAuth.
+      - name: ChatGPT
+        description: Remote MCP integration via OAuth.
+      - name: Cursor
+        description: Remote MCP integration via OAuth or API key.
+      - name: Windsurf
+        description: Remote MCP integration via OAuth or API key.
+      - name: VS Code
+        description: Local MCP server integration.
+      - name: Anthropic / OpenAI / Google Models
+        description: >-
+          Tool definitions can be generated in either anthropic or openai
+          format via AgentToolManager. Standard Agent ships ReWOO-style
+          planning compatible with Claude, GPT-4 class, and Gemini models.
+    properties_solutions:
+      - name: Enterprise Agentic Sandbox
+        description: >-
+          Closed environment for capturing and validating agent behavior
+          before connecting to live systems. Enterprise tier.
+      - name: API Scorecard
+        description: Automated assessment for API AI-readiness.
+      - name: Jentic Mini
+        description: >-
+          Free self-hosted execution layer for agents that prefer to keep
+          execution inside their own VPC.
+      - name: Arazzo UI / Editor
+        description: Visual workflow building and editing surface.
+      - name: VPC / On Premises Deployment
+        description: Enterprise tier; deploy the execution layer in customer infrastructure.
+    properties_plans:
+      - url: plans/jentic-plans-pricing.yml
+        type: PlansPricing
+    properties_rateLimits:
+      - url: rate-limits/jentic-rate-limits.yml
+        type: RateLimits
+    properties_finops:
+      - url: finops/jentic-finops.yml
+        type: FinOps
+    properties_sdks:
+      - name: Jentic Python SDK
+        url: https://pypi.org/project/jentic/
+        repository: https://github.com/jentic/jentic-sdks
+        language: Python
+        install: pip install jentic
+        notes: >-
+          Provides the Jentic client class plus SearchRequest, LoadRequest,
+          ExecutionRequest. AgentToolManager generates tool definitions in
+          anthropic or openai format.
+      - name: Jentic TypeScript SDK
+        language: TypeScript
+        notes: Listed as "not yet available" on docs.jentic.com.
+      - name: Arazzo Runner CLI
+        repository: https://github.com/jentic/arazzo-engine
+        install: pip install arazzo-runner
+        language: Python
+        notes: >-
+          CLI plus Python API for executing Arazzo workflows directly.
+          Commands include execute-workflow, list-workflows,
+          show-env-mappings.
+      - name: Jentic Mini
+        repository: https://github.com/jentic/jentic-mini
+        language: Python
+        notes: Self-hosted API execution layer.
+      - name: Standard Agent
+        repository: https://github.com/jentic/standard-agent
+        language: Python
+        notes: >-
+          Composable ReWOO reasoning agent preconfigured with Jentic tools.
+          Primary class ReWOOAgent. Requires Python 3.11+.
+      - name: Jentic OpenAPI Tools
+        repository: https://github.com/jentic/jentic-openapi-tools
+        language: Python
+      - name: Jentic Arazzo Tools
+        repository: https://github.com/jentic/jentic-arazzo-tools
+        language: TypeScript
+  - aid: jentic:jentic-mcp
+    name: Jentic Remote MCP Server
+    humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+    baseURL: https://api.jentic.com/mcp
+    description: >-
+      The Jentic Remote MCP Server is the hosted Model Context Protocol
+      endpoint that exposes the Jentic catalog to MCP-capable clients
+      (Claude Desktop, ChatGPT, Cursor, Windsurf, VS Code). It speaks the
+      same search / load / execute pattern as the Jentic API, but packaged
+      as MCP tools. Supports OAuth 2.0 with PKCE and dynamic client
+      registration, with an API key fallback for Cursor and Windsurf.
+    tags:
+      - MCP
+      - AI Agents
+      - OAuth
+      - Remote MCP
+    properties:
+      - url: https://docs.jentic.com/guides/mcp/
+        type: Documentation
+      - url: https://docs.jentic.com/guides/mcp/remote-mcp/
+        type: GettingStarted
+      - url: https://api.jentic.com/mcp
+        type: BaseURL
+      - url: capabilities/mcp-publishing.yaml
+        type: NaftikoCapability
+    properties_authentication:
+      - name: OAuth 2.0
+        scheme: oauth2
+        notes: >-
+          Recommended. PKCE supported. Automatic token refresh. Dynamic
+          client registration. Used by Claude Desktop, ChatGPT, Cursor,
+          Windsurf.
+      - name: API Key
+        scheme: apiKey
+        notes: >-
+          Fallback for Cursor and Windsurf. Uses an agent-scoped Jentic
+          API key (JENTIC_AGENT_API_KEY).
+    properties_features:
+      - name: search_apis Tool
+        description: Lists matching APIs and workflows for a natural language query.
+      - name: load_execution_info Tool
+        description: Returns the schema and auth requirements for a chosen operation.
+      - name: execute Tool
+        description: Executes an operation or workflow with managed credentials.
+      - name: list_credentials Resource
+        description: Lists the agent's available upstream credentials.
+  - aid: jentic:arazzo-engine
+    name: Arazzo Engine
+    humanURL: https://github.com/jentic/arazzo-engine
+    description: >-
+      Open-source Python engine that executes Arazzo workflow specifications
+      alongside OpenAPI operation definitions. Powers the Jentic platform's
+      workflow execution and is also installable standalone as
+      arazzo-runner for direct use in agents and automation. Handles
+      authentication resolution (API key, OAuth 2.0, basic, bearer),
+      dynamic server URL resolution, parameter chaining between steps, and
+      blob storage for large binary payloads.
+    tags:
+      - Arazzo
+      - OpenAPI
+      - Workflows
+      - Open Source
+    properties:
+      - url: https://github.com/jentic/arazzo-engine
+        type: SourceCode
+      - url: https://docs.jentic.com/getting-started/arazzo-runner/
+        type: Documentation
+      - url: https://pypi.org/project/arazzo-runner/
+        type: PythonPackage
+  - aid: jentic:standard-agent
+    name: Jentic Standard Agent
+    humanURL: https://github.com/jentic/standard-agent
+    description: >-
+      Open-source composable reasoning agent framework that plans, acts, and
+      recovers from failures, preconfigured with Jentic tools and a ReWOO
+      reasoning loop. Primary entry point is the ReWOOAgent Python class.
+      Bring-your-own LLM (Anthropic, OpenAI, Google). Demonstrates how to
+      build an agent that uses Jentic's just-in-time tooling without
+      committing to a specific agent framework.
+    tags:
+      - Agent Framework
+      - ReWOO
+      - Open Source
+      - Python
+    properties:
+      - url: https://github.com/jentic/standard-agent
+        type: SourceCode
+      - url: https://docs.jentic.com/getting-started/standard-agent/
+        type: Documentation
+  - aid: jentic:jentic-mini
+    name: Jentic Mini
+    humanURL: https://github.com/jentic/jentic-mini
+    description: >-
+      Free, open-source, self-hosted API execution layer that sits between
+      an agent and the outside world. The agent says what it wants to do
+      and Jentic Mini handles the how: finding the right API, injecting
+      credentials at runtime, and brokering the request. Intended for
+      teams that want Jentic's execution model without sending traffic
+      through the hosted Jentic API.
+    tags:
+      - Self Hosted
+      - Open Source
+      - Agent Runtime
+    properties:
+      - url: https://github.com/jentic/jentic-mini
+        type: SourceCode
+  - aid: jentic:jairf
+    name: Jentic API AI-Readiness Framework (JAIRF)
+    humanURL: https://github.com/jentic/api-ai-readiness-framework
+    description: >-
+      Technical specification for evaluating how interpretable, operable,
+      and trustworthy an API is for AI systems and autonomous agents.
+      Defines the signals, dimensions, scoring model, and normalization
+      rules used by the Jentic API Scorecard product. Apache 2.0.
+    tags:
+      - Specification
+      - API AI Readiness
+      - Open Source
+    properties:
+      - url: https://github.com/jentic/api-ai-readiness-framework
+        type: SourceCode
 common:
   - url: https://jentic.com/
     name: Jentic
     type: Website
-    description: 'null'
   - url: https://jentic.com/blog
-    name: Jentic Blog | Insights & Updates
+    name: Jentic Blog
     type: Blog
-    description: 'null'
   - url: https://docs.jentic.com/
     name: Jentic Documentation
     type: Documentation
-    description: 'null'
   - url: https://jentic.com/pricing
     name: Jentic Pricing
     type: Pricing
-    description: 'null'
   - url: https://app.jentic.com/sign-up
     name: Jentic Sign Up
     type: SignUp
-    description: 'null'
+  - url: https://app.jentic.com/
+    name: Jentic Console
+    type: Console
   - url: https://jentic.com/contact
     name: Jentic Contact
     type: Contact
-    description: 'null'
   - url: https://jentic.com/company
     name: About Jentic
     type: About
-    description: 'null'
   - url: https://github.com/jentic
-    name: Jentic GitHub
+    name: Jentic GitHub Organization
     type: GitHubOrganization
-    description: 'null'
   - url: https://jentic.com/privacy
     name: Jentic Privacy Policy
     type: PrivacyPolicy
-    description: 'null'
   - url: https://jentic.com/terms
     name: Jentic Terms of Service
     type: TermsOfService
-    description: 'null'
   - url: https://www.linkedin.com/company/jentic
     name: Jentic LinkedIn
     type: LinkedIn
-    description: 'null'
   - url: https://youtube.com/@JenticAI
     name: Jentic YouTube
     type: YouTube
-    description: 'null'
   - url: https://docs.jentic.com/community/support/
     name: Jentic Support
     type: Support
-    description: 'null'
   - url: https://docs.jentic.com/community/faq/
     name: Jentic FAQ
     type: FAQ
-    description: 'null'
-  - url: https://jentic.com/blog/press
-    name: Jentic Press
-    type: Press
-    description: 'null'
-  - url: https://jentic.com/blog/feed.xml
-    name: Jentic Blog RSS Feed
-    type: BlogFeed
-    description: 'null'
   - url: https://docs.jentic.com/community/security/
     name: Jentic Security
     type: Security
-    description: 'null'
+  - url: https://docs.jentic.com/community/contributing/
+    name: Jentic Contributing
+    type: Contributing
+  - url: https://jentic.com/blog/press
+    name: Jentic Press
+    type: Press
+  - url: https://jentic.com/blog/feed.xml
+    name: Jentic Blog RSS Feed
+    type: BlogFeed
+  - url: https://pypi.org/project/jentic/
+    name: Jentic Python Package
+    type: PythonPackage
+  - url: https://pypi.org/project/arazzo-runner/
+    name: Arazzo Runner Python Package
+    type: PythonPackage
+  - url: vocabulary/jentic-vocabulary.yml
+    type: Vocabulary
   - url: json-ld/jentic-context.jsonld
     type: JSON-LD
   - url: json-schema/jentic-operation-schema.json
     type: JSONSchema
   - url: json-schema/jentic-agent-schema.json
     type: JSONSchema
-created: '2026-01-02'
-modified: '2026-04-28'
-position: Consumer
-segments:
-  - Workflows
-  - AI Agents
-  - Integrations
-description: >-
-  Jentic is an AI infrastructure company building the agentic knowledge layer for
-  APIs. Founded in late 2024 and backed by $4.5M in pre-seed funding, Jentic enables
-  enterprises to confidently manage, scale, and govern AI agent initiatives in one
-  unified platform built on open standards. The platform provides secure execution,
-  managed authentication, unified permissions, and observability for AI agents accessing
-  over 1500 APIs and 2000 workflows.
+  - url: json-schema/jentic-workflow-schema.json
+    type: JSONSchema
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
-specificationVersion: '0.19'
