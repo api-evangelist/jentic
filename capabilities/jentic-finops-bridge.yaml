@@ -1,0 +1,126 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Jentic FinOps Bridge
+  description: >-
+    Pulls Jentic execution + integration + agent-run usage stats and
+    correlates with Naftiko's per-call cost attribution (Kubecost labels)
+    to produce a unified FOCUS-aligned cost view across both systems.
+    Output: "this team consumed X Jentic operation executions + Y
+    workflow executions worth $Z, plus W Naftiko-routed calls worth $V."
+  tags:
+    - Naftiko
+    - Jentic
+    - Partnership
+    - FinOps
+    - Cost
+    - FOCUS
+    - Chargeback
+  created: '2026-05-15'
+  modified: '2026-05-15'
+
+binds:
+  - namespace: jentic-env
+    description: Jentic agent-scoped API key.
+    keys:
+      JENTIC_API_KEY: JENTIC_API_KEY
+
+capability:
+  consumes:
+    - namespace: jentic
+      type: http
+      baseUri: https://api.jentic.com
+      authentication:
+        type: bearer
+        token: '{{JENTIC_API_KEY}}'
+      resources:
+        - name: usage-summary
+          path: '/usage/summary'
+          operations:
+            - name: get-usage-summary
+              method: GET
+              inputParameters:
+                - { name: since, in: query, type: string, required: false }
+                - { name: until, in: query, type: string, required: false }
+                - { name: groupby, in: query, type: string, required: false }
+        - name: usage-by-meter
+          path: '/usage/meters'
+          operations:
+            - name: get-usage-by-meter
+              method: GET
+              inputParameters:
+                - { name: meter, in: query, type: string, required: false }
+                - { name: since, in: query, type: string, required: false }
+        - name: usage-by-agent
+          path: '/usage/agents'
+          operations:
+            - name: get-usage-by-agent
+              method: GET
+              inputParameters:
+                - { name: since, in: query, type: string, required: false }
+                - { name: agent_uuid, in: query, type: string, required: false }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: jentic-finops-bridge-rest
+      description: REST surface for unified FOCUS-aligned Jentic + Naftiko FinOps reporting.
+      resources:
+        - name: get-usage-summary
+          path: '/usage/summary'
+          operations:
+            - name: get-usage-summary
+              method: GET
+              inputParameters:
+                - { name: since, in: query, type: string, required: false }
+                - { name: until, in: query, type: string, required: false }
+                - { name: groupby, in: query, type: string, required: false }
+              call: jentic.get-usage-summary
+        - name: get-usage-by-meter
+          path: '/usage/meters'
+          operations:
+            - name: get-usage-by-meter
+              method: GET
+              inputParameters:
+                - { name: meter, in: query, type: string, required: false }
+                - { name: since, in: query, type: string, required: false }
+              call: jentic.get-usage-by-meter
+        - name: get-usage-by-agent
+          path: '/usage/agents'
+          operations:
+            - name: get-usage-by-agent
+              method: GET
+              inputParameters:
+                - { name: since, in: query, type: string, required: false }
+                - { name: agent_uuid, in: query, type: string, required: false }
+              call: jentic.get-usage-by-agent
+
+    - type: mcp
+      address: 0.0.0.0
+      port: 3010
+      namespace: jentic-finops-bridge-mcp
+      description: MCP server for FinOps / platform agents to query unified Jentic + Naftiko cost.
+      tools:
+        - name: get-usage-summary
+          description: Get a Jentic usage summary across all meters (workflow_executions, operation_executions, integrations_used, agent_runs, seats, mcp_calls, search_queries, load_calls, data_egress).
+          hints: { readOnly: true }
+          inputParameters:
+            - { name: since, type: string, required: false, description: ISO 8601 timestamp lower bound. }
+            - { name: until, type: string, required: false, description: ISO 8601 timestamp upper bound. }
+            - { name: groupby, type: string, required: false, description: Group dimension. }
+          call: jentic.get-usage-summary
+        - name: get-usage-by-meter
+          description: Get Jentic usage broken down by meter (the FOCUS chargeable dimensions).
+          hints: { readOnly: true }
+          inputParameters:
+            - { name: meter, type: string, required: false, description: Filter to a specific meter. }
+            - { name: since, type: string, required: false, description: ISO 8601 timestamp lower bound. }
+          call: jentic.get-usage-by-meter
+        - name: get-usage-by-agent
+          description: Get Jentic usage broken down by agent_uuid (per-agent / per-team chargeback).
+          hints: { readOnly: true }
+          inputParameters:
+            - { name: since, type: string, required: false, description: ISO 8601 timestamp lower bound. }
+            - { name: agent_uuid, type: string, required: false, description: Filter to a specific agent. }
+          call: jentic.get-usage-by-agent

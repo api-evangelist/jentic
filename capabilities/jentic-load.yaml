@@ -1,0 +1,65 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Jentic Load
+  description: >-
+    Loads execution spec (HTTP method, path, JSON Schema for inputs,
+    auth requirements) for one or more Jentic operations or Arazzo
+    workflows by UUID. The hydration step in Jentic's JITT pattern —
+    only fetch tool schemas the agent actually needs, instead of
+    preloading all 1,500+ APIs.
+  tags:
+    - Naftiko
+    - Jentic
+    - Partnership
+    - JITT
+    - Load
+    - Schema
+  created: '2026-05-15'
+  modified: '2026-05-15'
+
+binds:
+  - namespace: jentic-env
+    description: Jentic agent-scoped API key.
+    keys:
+      JENTIC_API_KEY: JENTIC_API_KEY
+
+capability:
+  consumes:
+    - namespace: jentic
+      type: http
+      baseUri: https://api.jentic.com
+      authentication:
+        type: bearer
+        token: '{{JENTIC_API_KEY}}'
+      resources:
+        - name: load
+          path: '/agents/load'
+          operations:
+            - name: load-execution-spec
+              method: POST
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: jentic-load-rest
+      description: REST surface for hydrating Jentic operation + workflow execution specs.
+      resources:
+        - name: load
+          path: '/load'
+          operations:
+            - name: load-execution-spec
+              method: POST
+              call: jentic.load-execution-spec
+
+    - type: mcp
+      address: 0.0.0.0
+      port: 3010
+      namespace: jentic-load-mcp
+      description: MCP server exposing Jentic JITT load to agents.
+      tools:
+        - name: load-execution-spec
+          description: Hydrate one or more Jentic operations or workflows by UUID — returns method, path, JSON Schema, and auth requirements.
+          hints: { readOnly: true }
+          call: jentic.load-execution-spec

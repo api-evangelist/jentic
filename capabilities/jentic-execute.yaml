@@ -1,0 +1,64 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Jentic Execute
+  description: >-
+    Executes a Jentic operation (op_*) or Arazzo workflow (wf_*) on
+    behalf of an agent. Credentials injected server-side from Jentic's
+    vault — Naftiko engine never holds long-lived third-party tokens.
+    Returns execution_id for downstream observability correlation.
+  tags:
+    - Naftiko
+    - Jentic
+    - Partnership
+    - Execute
+    - Arazzo
+    - Workflow
+  created: '2026-05-15'
+  modified: '2026-05-15'
+
+binds:
+  - namespace: jentic-env
+    description: Jentic agent-scoped API key.
+    keys:
+      JENTIC_API_KEY: JENTIC_API_KEY
+
+capability:
+  consumes:
+    - namespace: jentic
+      type: http
+      baseUri: https://api.jentic.com
+      authentication:
+        type: bearer
+        token: '{{JENTIC_API_KEY}}'
+      resources:
+        - name: execute
+          path: '/agents/execute'
+          operations:
+            - name: execute-tool
+              method: POST
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: jentic-execute-rest
+      description: REST surface for executing Jentic operations + Arazzo workflows.
+      resources:
+        - name: execute
+          path: '/execute'
+          operations:
+            - name: execute-tool
+              method: POST
+              call: jentic.execute-tool
+
+    - type: mcp
+      address: 0.0.0.0
+      port: 3010
+      namespace: jentic-execute-mcp
+      description: MCP server exposing Jentic execution to AI agents.
+      tools:
+        - name: execute-tool
+          description: Execute a Jentic operation (op_*) or Arazzo workflow (wf_*) with server-side credential injection. Returns execution_id, status, and output.
+          hints: { destructiveHint: true }
+          call: jentic.execute-tool

@@ -1,0 +1,117 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Jentic MCP Server Bridge
+  description: >-
+    Wraps Jentic's hosted Remote MCP server (api.jentic.com/mcp) as a
+    Naftiko consume so any Naftiko capability can reach Jentic's catalog
+    of 1,500+ APIs and 2,000+ Arazzo workflows via MCP and re-expose
+    them as Naftiko-governed MCP tools. The entire Jentic catalog
+    becomes a Naftiko-consumable surface.
+  tags:
+    - Naftiko
+    - Jentic
+    - Partnership
+    - MCP
+    - Tool-Bridge
+    - Re-expose
+  created: '2026-05-15'
+  modified: '2026-05-15'
+
+binds:
+  - namespace: jentic-env
+    description: Jentic agent-scoped API key + MCP server endpoint.
+    keys:
+      JENTIC_API_KEY: JENTIC_API_KEY
+      JENTIC_MCP_BASE: JENTIC_MCP_BASE
+
+capability:
+  consumes:
+    - namespace: jentic-mcp
+      type: http
+      baseUri: '{{JENTIC_MCP_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{JENTIC_API_KEY}}'
+      resources:
+        - name: list-mcp-tools
+          path: '/mcp/tools'
+          operations:
+            - name: list-mcp-tools
+              method: GET
+        - name: invoke-mcp-tool
+          path: '/mcp/tools/{{tool_name}}/invoke'
+          operations:
+            - name: invoke-mcp-tool
+              method: POST
+              inputParameters:
+                - { name: tool_name, in: path, required: true }
+        - name: list-mcp-resources
+          path: '/mcp/resources'
+          operations:
+            - name: list-mcp-resources
+              method: GET
+        - name: list-credentials
+          path: '/mcp/resources/credentials'
+          operations:
+            - name: list-credentials
+              method: GET
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: jentic-mcp-server-bridge-rest
+      description: REST surface for the Jentic MCP server, wrapped for Naftiko consumption.
+      resources:
+        - name: list-mcp-tools
+          path: '/mcp/tools'
+          operations:
+            - name: list-mcp-tools
+              method: GET
+              call: jentic-mcp.list-mcp-tools
+        - name: invoke-mcp-tool
+          path: '/mcp/tools/{tool_name}/invoke'
+          operations:
+            - name: invoke-mcp-tool
+              method: POST
+              inputParameters:
+                - { name: tool_name, in: path, type: string, required: true }
+              call: jentic-mcp.invoke-mcp-tool
+        - name: list-mcp-resources
+          path: '/mcp/resources'
+          operations:
+            - name: list-mcp-resources
+              method: GET
+              call: jentic-mcp.list-mcp-resources
+        - name: list-credentials
+          path: '/mcp/credentials'
+          operations:
+            - name: list-credentials
+              method: GET
+              call: jentic-mcp.list-credentials
+
+    - type: mcp
+      address: 0.0.0.0
+      port: 3010
+      namespace: jentic-mcp-server-bridge-mcp
+      description: MCP server re-exposing Jentic MCP tools as Naftiko-governed MCP tools.
+      tools:
+        - name: list-mcp-tools
+          description: List the MCP tools exposed by Jentic (search_apis, load_execution_info, execute).
+          hints: { readOnly: true }
+          call: jentic-mcp.list-mcp-tools
+        - name: invoke-mcp-tool
+          description: Invoke a Jentic MCP tool by name (governed pass-through).
+          hints: { destructiveHint: true }
+          inputParameters:
+            - { name: tool_name, type: string, required: true, description: Jentic MCP tool name. }
+          call: jentic-mcp.invoke-mcp-tool
+        - name: list-mcp-resources
+          description: List resources exposed by Jentic's MCP server.
+          hints: { readOnly: true }
+          call: jentic-mcp.list-mcp-resources
+        - name: list-credentials
+          description: List credentials exposed via Jentic's MCP credentials resource.
+          hints: { readOnly: true }
+          call: jentic-mcp.list-credentials

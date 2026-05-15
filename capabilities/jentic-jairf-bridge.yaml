@@ -1,0 +1,126 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Jentic JAIRF Bridge
+  description: >-
+    Pulls Jentic's JAIRF (Jentic AI-Readiness Framework) scores into
+    Naftiko Signals so company / API landing pages get an "AI-ready"
+    governance signal alongside the existing service / standard / tool
+    coverage. Lets Naftiko's outside-in profiling layer carry the
+    Jentic-computed agent-readiness rubric for any API in their catalog.
+  tags:
+    - Naftiko
+    - Jentic
+    - Partnership
+    - JAIRF
+    - AI-Readiness
+    - Signals
+    - GTM
+  created: '2026-05-15'
+  modified: '2026-05-15'
+
+binds:
+  - namespace: jentic-env
+    description: Jentic agent-scoped API key.
+    keys:
+      JENTIC_API_KEY: JENTIC_API_KEY
+
+capability:
+  consumes:
+    - namespace: jentic
+      type: http
+      baseUri: https://api.jentic.com
+      authentication:
+        type: bearer
+        token: '{{JENTIC_API_KEY}}'
+      resources:
+        - name: list-jairf-scores
+          path: '/jairf/scores'
+          operations:
+            - name: list-jairf-scores
+              method: GET
+              inputParameters:
+                - { name: api_name, in: query, type: string, required: false }
+                - { name: cursor, in: query, type: string, required: false }
+        - name: jairf-score
+          path: '/jairf/scores/{{api_id}}'
+          operations:
+            - name: get-jairf-score
+              method: GET
+              inputParameters:
+                - { name: api_id, in: path, required: true }
+        - name: jairf-rubric
+          path: '/jairf/rubric'
+          operations:
+            - name: get-jairf-rubric
+              method: GET
+        - name: jairf-summary
+          path: '/jairf/summary'
+          operations:
+            - name: get-jairf-summary
+              method: GET
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: jentic-jairf-bridge-rest
+      description: REST surface for Jentic JAIRF AI-Readiness scores.
+      resources:
+        - name: list-jairf-scores
+          path: '/jairf/scores'
+          operations:
+            - name: list-jairf-scores
+              method: GET
+              inputParameters:
+                - { name: api_name, in: query, type: string, required: false }
+                - { name: cursor, in: query, type: string, required: false }
+              call: jentic.list-jairf-scores
+        - name: jairf-score
+          path: '/jairf/scores/{api_id}'
+          operations:
+            - name: get-jairf-score
+              method: GET
+              inputParameters:
+                - { name: api_id, in: path, type: string, required: true }
+              call: jentic.get-jairf-score
+        - name: jairf-rubric
+          path: '/jairf/rubric'
+          operations:
+            - name: get-jairf-rubric
+              method: GET
+              call: jentic.get-jairf-rubric
+        - name: jairf-summary
+          path: '/jairf/summary'
+          operations:
+            - name: get-jairf-summary
+              method: GET
+              call: jentic.get-jairf-summary
+
+    - type: mcp
+      address: 0.0.0.0
+      port: 3010
+      namespace: jentic-jairf-bridge-mcp
+      description: MCP server for surfacing Jentic JAIRF AI-Readiness scores.
+      tools:
+        - name: list-jairf-scores
+          description: List Jentic JAIRF AI-Readiness scores across the catalog (optionally filtered by API).
+          hints: { readOnly: true }
+          inputParameters:
+            - { name: api_name, type: string, required: false, description: Filter to a specific API. }
+            - { name: cursor, type: string, required: false, description: Pagination cursor. }
+          call: jentic.list-jairf-scores
+        - name: get-jairf-score
+          description: Get the JAIRF AI-Readiness score for a single API.
+          hints: { readOnly: true }
+          inputParameters:
+            - { name: api_id, type: string, required: true, description: Jentic API ID. }
+          call: jentic.get-jairf-score
+        - name: get-jairf-rubric
+          description: Get the JAIRF rubric definition (the scoring dimensions and weights).
+          hints: { readOnly: true }
+          call: jentic.get-jairf-rubric
+        - name: get-jairf-summary
+          description: Get an aggregate JAIRF score summary across the Jentic catalog.
+          hints: { readOnly: true }
+          call: jentic.get-jairf-summary
