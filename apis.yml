@@ -465,7 +465,7 @@ common:
   - url: vocabulary/jentic-vocabulary.yml
     type: Vocabulary
   - url: json-ld/jentic-context.jsonld
-    type: JSON-LD
+    type: JSONLD
   - url: json-schema/jentic-operation-schema.json
     type: JSONSchema
   - url: json-schema/jentic-agent-schema.json
