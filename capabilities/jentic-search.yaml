@@ -1,66 +1,82 @@
-naftiko: "1.0.0-alpha2"
-
+naftiko: 1.0.0-alpha2
 info:
-  title: Jentic Search
-  description: >-
-    Calls Jentic's semantic search API over its catalog of 1,500+ public
-    APIs and 2,000+ Arazzo workflows. Lets a Naftiko capability discover
-    Jentic-cataloged operations (op_*) and workflows (wf_*) by intent
-    and surface them into Backstage Fleet discovery alongside Naftiko-
-    declared capabilities.
+  label: Jentic API — Search
+  description: 'Jentic API — Search. 1 operations. Lead operation: Search For APIs And Workflows. Self-contained Naftiko capability
+    covering one Jentic business surface.'
   tags:
-    - Naftiko
-    - Jentic
-    - Partnership
-    - Discovery
-    - Search
-    - Arazzo
-    - Catalog
-  created: '2026-05-15'
-  modified: '2026-05-15'
-
+  - Jentic
+  - Search
+  created: '2026-05-19'
+  modified: '2026-05-19'
 binds:
-  - namespace: jentic-env
-    description: Jentic agent-scoped API key (X-JENTIC-API-KEY header).
-    keys:
-      JENTIC_API_KEY: JENTIC_API_KEY
-
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
 capability:
   consumes:
-    - namespace: jentic
-      type: http
-      baseUri: https://api.jentic.com
-      authentication:
-        type: bearer
-        token: '{{JENTIC_API_KEY}}'
-      resources:
-        - name: search
-          path: '/agents/search'
-          operations:
-            - name: search-catalog
-              method: POST
-
+  - type: http
+    namespace: jentic-search
+    baseUri: https://api.jentic.com/api/v1
+    description: Jentic API — Search business capability. Self-contained, no shared references.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search For APIs And Workflows
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: apikey
+      key: X-JENTIC-API-KEY
+      value: '{{env.JENTIC_API_KEY}}'
+      placement: header
   exposes:
-    - type: rest
-      address: 0.0.0.0
-      port: 8080
-      namespace: jentic-search-rest
-      description: REST surface for Jentic catalog semantic search.
-      resources:
-        - name: search
-          path: '/search'
-          operations:
-            - name: search-catalog
-              method: POST
-              call: jentic.search-catalog
-
-    - type: mcp
-      address: 0.0.0.0
-      port: 3010
-      namespace: jentic-search-mcp
-      description: MCP server exposing Jentic semantic search to AI agents.
-      tools:
-        - name: search-catalog
-          description: Semantic search over Jentic's 1,500+ APIs and 2,000+ Arazzo workflows. Returns ranked op_/wf_ UUIDs with scores.
-          hints: { readOnly: true }
-          call: jentic.search-catalog
+  - type: rest
+    namespace: jentic-search-rest
+    port: 8080
+    description: REST adapter for Jentic API — Search. One Spectral-compliant resource per consumed operation, prefixed with
+      /v1.
+    resources:
+    - path: /v1/agents/search
+      name: agents-search
+      description: REST surface for agents-search.
+      operations:
+      - method: POST
+        name: searchapis
+        description: Search For APIs And Workflows
+        call: jentic-search.searchapis
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: jentic-search-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Jentic API — Search. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: search-apis-and-workflows
+      description: Search For APIs And Workflows
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: jentic-search.searchapis
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
