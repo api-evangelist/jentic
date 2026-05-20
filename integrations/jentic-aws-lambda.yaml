@@ -1,0 +1,117 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Invoke Jentic workflows from AWS Lambda functions
+  description: Let an AWS Lambda function defer third-party API orchestration to Jentic by calling search + execute instead of bundling provider SDKs.
+  tags:
+  - Jentic
+  - Integration
+  - Serverless runtime
+  - aws-lambda
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    AWS_LAMBDA_API_KEY: AWS_LAMBDA_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the workflow the Lambda needs to invoke.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic workflow and return the result to the Lambda caller.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: aws-lambda
+    baseUri: https://lambda.us-east-1.amazonaws.com
+    description: AWS Lambda API operations consumed by this integration.
+    resources:
+    - name: 2015-03-31-functions-functionname-invocations
+      path: /2015-03-31/functions/{FunctionName}/invocations
+      operations:
+      - name: invokefunction
+        method: POST
+        description: 'AWS Lambda API: invokeFunction'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: FunctionName
+          in: path
+          type: string
+          description: Path parameter FunctionName.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-aws-lambda-mcp
+    description: MCP adapter for the jentic-aws-lambda integration.
+    tools:
+    - name: jentic_aws_lambda
+      description: Execute the jentic aws lambda integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-aws-lambda-rest
+    port: 8080
+    description: REST adapter for the jentic-aws-lambda integration.
+    resources:
+    - path: /jentic-aws-lambda
+      name: jentic-aws-lambda
+      description: REST surface for the jentic-aws-lambda integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-aws-lambda integration.
+        call: jentic_aws_lambda
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

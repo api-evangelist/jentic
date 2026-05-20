@@ -1,0 +1,112 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Lint OpenAPI specs surfaced by Jentic search
+  description: For every API spec Jentic surfaces in a workflow search, run Spectral lint and attach the report so downstream consumers can score spec quality.
+  tags:
+  - Jentic
+  - Integration
+  - API tooling
+  - spectral
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    SPECTRAL_API_KEY: SPECTRAL_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for APIs whose specs need linting.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Load execution info to discover the underlying OpenAPI spec URL.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: spectral
+    baseUri: https://api.stoplight.io
+    description: Stoplight Spectral API operations consumed by this integration.
+    resources:
+    - name: v1-lint
+      path: /v1/lint
+      operations:
+      - name: lintspec
+        method: POST
+        description: 'Stoplight Spectral API: lintSpec'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-spectral-mcp
+    description: MCP adapter for the jentic-spectral integration.
+    tools:
+    - name: jentic_spectral
+      description: Execute the jentic spectral integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-spectral-rest
+    port: 8080
+    description: REST adapter for the jentic-spectral integration.
+    resources:
+    - path: /jentic-spectral
+      name: jentic-spectral
+      description: REST surface for the jentic-spectral integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-spectral integration.
+        call: jentic_spectral
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

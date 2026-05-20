@@ -1,0 +1,60 @@
+- slug: jentic-langchain
+  label: Expose Jentic workflows as LangChain tools
+  partner: langchain
+  category: Agent framework
+  use_case: When a LangChain agent needs to call a third-party API, search Jentic's catalog, load the execution info, and execute the workflow as a LangChain Tool result.
+- slug: jentic-openai
+  label: Wire Jentic execution into OpenAI function calling
+  partner: openai
+  category: Agent framework
+  use_case: When an OpenAI model emits a tool_call, resolve it through Jentic's search + load + execute pipeline and return the result as a tool message.
+- slug: jentic-anthropic
+  label: Resolve Anthropic tool_use blocks via Jentic
+  partner: anthropic
+  category: Agent framework
+  use_case: When Claude returns a tool_use block, search Jentic for the matching API operation, execute it, and return the result as a tool_result message.
+- slug: jentic-n8n
+  label: Run Jentic workflows from n8n nodes
+  partner: n8n
+  category: Workflow automation
+  use_case: Trigger a Jentic API workflow from an n8n workflow node; n8n hands off Arazzo execution to Jentic and consumes the result downstream.
+- slug: jentic-zapier
+  label: Trigger Jentic workflows from Zapier Zaps
+  partner: zapier
+  category: Workflow automation
+  use_case: When a Zapier Zap fires, hand the event payload to a Jentic workflow lookup-and-execute so any API in Jentic's catalog becomes a Zap action.
+- slug: jentic-power-automate
+  label: Execute Jentic workflows from Microsoft Power Automate
+  partner: power-automate
+  category: Workflow automation
+  use_case: Allow a Power Automate flow to call a Jentic-hosted workflow via HTTP action so enterprise process automation can reach any API in Jentic's catalog.
+- slug: jentic-postman
+  label: Import Jentic-resolved workflows into Postman collections
+  partner: postman
+  category: API tooling
+  use_case: Search Jentic for an API workflow, load its execution info, and materialize the calls into a Postman Collection for human-driven exploration.
+- slug: jentic-spectral
+  label: Lint OpenAPI specs surfaced by Jentic search
+  partner: spectral
+  category: API tooling
+  use_case: For every API spec Jentic surfaces in a workflow search, run Spectral lint and attach the report so downstream consumers can score spec quality.
+- slug: jentic-github-actions
+  label: Run Jentic workflows from GitHub Actions
+  partner: github-actions
+  category: API tooling
+  use_case: Trigger a Jentic workflow from a GitHub Actions job so CI/CD pipelines can call any API in Jentic's catalog without writing per-provider integration code.
+- slug: jentic-aws-lambda
+  label: Invoke Jentic workflows from AWS Lambda functions
+  partner: aws-lambda
+  category: Serverless runtime
+  use_case: Let an AWS Lambda function defer third-party API orchestration to Jentic by calling search + execute instead of bundling provider SDKs.
+- slug: jentic-cloudflare-workers
+  label: Call Jentic workflows from Cloudflare Workers
+  partner: cloudflare-workers
+  category: Serverless runtime
+  use_case: Use Jentic as an external workflow engine for Cloudflare Workers so edge handlers don't need to bundle per-provider auth and SDKs.
+- slug: jentic-slack
+  label: Run Jentic workflows from Slack slash commands
+  partner: slack
+  category: Collaboration
+  use_case: Wire a Slack slash command to Jentic's search-and-execute pipeline so a Slack message can trigger any API workflow in Jentic's catalog.

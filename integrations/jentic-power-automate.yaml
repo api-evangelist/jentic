@@ -1,0 +1,122 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Execute Jentic workflows from Microsoft Power Automate
+  description: Allow a Power Automate flow to call a Jentic-hosted workflow via HTTP action so enterprise process automation can reach any API in Jentic's catalog.
+  tags:
+  - Jentic
+  - Integration
+  - Workflow automation
+  - power-automate
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    POWER_AUTOMATE_API_KEY: POWER_AUTOMATE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Load execution info for the Jentic workflow referenced by the Power Automate flow.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic workflow and return its result to the flow.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: power-automate
+    baseUri: https://prod-00.westus.logic.azure.com
+    description: Power Automate HTTP triggers operations consumed by this integration.
+    resources:
+    - name: workflows-workflow-id-triggers-trigger-name-run
+      path: /workflows/{workflow_id}/triggers/{trigger_name}/run
+      operations:
+      - name: runflow
+        method: POST
+        description: 'Power Automate HTTP triggers: runFlow'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: workflow_id
+          in: path
+          type: string
+          description: Path parameter workflow_id.
+          required: true
+        - name: trigger_name
+          in: path
+          type: string
+          description: Path parameter trigger_name.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-power-automate-mcp
+    description: MCP adapter for the jentic-power-automate integration.
+    tools:
+    - name: jentic_power_automate
+      description: Execute the jentic power automate integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-power-automate-rest
+    port: 8080
+    description: REST adapter for the jentic-power-automate integration.
+    resources:
+    - path: /jentic-power-automate
+      name: jentic-power-automate
+      description: REST surface for the jentic-power-automate integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-power-automate integration.
+        call: jentic_power_automate
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

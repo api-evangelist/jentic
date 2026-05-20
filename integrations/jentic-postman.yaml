@@ -1,0 +1,112 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Import Jentic-resolved workflows into Postman collections
+  description: Search Jentic for an API workflow, load its execution info, and materialize the calls into a Postman Collection for human-driven exploration.
+  tags:
+  - Jentic
+  - Integration
+  - API tooling
+  - postman
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    POSTMAN_API_KEY: POSTMAN_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for an API workflow matching the developer's intent.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Load the execution info to build a Postman collection from.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: postman
+    baseUri: https://api.getpostman.com
+    description: Postman API operations consumed by this integration.
+    resources:
+    - name: collections
+      path: /collections
+      operations:
+      - name: createcollection
+        method: POST
+        description: 'Postman API: createCollection'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-postman-mcp
+    description: MCP adapter for the jentic-postman integration.
+    tools:
+    - name: jentic_postman
+      description: Execute the jentic postman integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-postman-rest
+    port: 8080
+    description: REST adapter for the jentic-postman integration.
+    resources:
+    - path: /jentic-postman
+      name: jentic-postman
+      description: REST surface for the jentic-postman integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-postman integration.
+        call: jentic_postman
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

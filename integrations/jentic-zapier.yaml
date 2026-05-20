@@ -1,0 +1,122 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Trigger Jentic workflows from Zapier Zaps
+  description: When a Zapier Zap fires, hand the event payload to a Jentic workflow lookup-and-execute so any API in Jentic's catalog becomes a Zap action.
+  tags:
+  - Jentic
+  - Integration
+  - Workflow automation
+  - zapier
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    ZAPIER_API_KEY: ZAPIER_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the workflow tied to this Zap action.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the matched Jentic workflow.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: zapier
+    baseUri: https://hooks.zapier.com
+    description: Zapier Webhooks operations consumed by this integration.
+    resources:
+    - name: hooks-catch-hook-id-token
+      path: /hooks/catch/{hook_id}/{token}
+      operations:
+      - name: invokehook
+        method: POST
+        description: 'Zapier Webhooks: invokeHook'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: hook_id
+          in: path
+          type: string
+          description: Path parameter hook_id.
+          required: true
+        - name: token
+          in: path
+          type: string
+          description: Path parameter token.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-zapier-mcp
+    description: MCP adapter for the jentic-zapier integration.
+    tools:
+    - name: jentic_zapier
+      description: Execute the jentic zapier integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-zapier-rest
+    port: 8080
+    description: REST adapter for the jentic-zapier integration.
+    resources:
+    - path: /jentic-zapier
+      name: jentic-zapier
+      description: REST surface for the jentic-zapier integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-zapier integration.
+        call: jentic_zapier
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

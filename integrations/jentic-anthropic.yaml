@@ -1,0 +1,112 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Resolve Anthropic tool_use blocks via Jentic
+  description: When Claude returns a tool_use block, search Jentic for the matching API operation, execute it, and return the result as a tool_result message.
+  tags:
+  - Jentic
+  - Integration
+  - Agent framework
+  - anthropic
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    ANTHROPIC_API_KEY: ANTHROPIC_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the API workflow named in the Claude tool_use block.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the resolved Jentic operation and capture the tool_result.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: anthropic
+    baseUri: https://api.anthropic.com
+    description: Anthropic Messages API operations consumed by this integration.
+    resources:
+    - name: v1-messages
+      path: /v1/messages
+      operations:
+      - name: createmessage
+        method: POST
+        description: 'Anthropic Messages API: createMessage'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-anthropic-mcp
+    description: MCP adapter for the jentic-anthropic integration.
+    tools:
+    - name: jentic_anthropic
+      description: Execute the jentic anthropic integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-anthropic-rest
+    port: 8080
+    description: REST adapter for the jentic-anthropic integration.
+    resources:
+    - path: /jentic-anthropic
+      name: jentic-anthropic
+      description: REST surface for the jentic-anthropic integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-anthropic integration.
+        call: jentic_anthropic
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

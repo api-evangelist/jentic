@@ -1,0 +1,261 @@
+# Curated top Jentic integrations grouped by category.
+# Each entry becomes one Naftiko capability YAML in integrations/.
+# Jentic's domain = agents-execute-workflows: Arazzo runtime, agent skills,
+# API discovery, workflow execution. Each integration consumes Jentic
+# operations + partner operations and exposes a unified REST + MCP adapter.
+
+# Agent frameworks (3)
+- partner: langchain
+  name: Expose Jentic workflows as LangChain tools
+  category: Agent framework
+  use_case: When a LangChain agent needs to call a third-party API, search Jentic's catalog, load the execution info, and execute the workflow as a LangChain Tool result.
+  partner_baseUri: https://api.smith.langchain.com
+  partner_api: LangSmith Runs API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic's API catalog for a workflow matching the agent's intent.
+    - method: POST
+      path: /agents/load
+      name: loadExecutionInfo
+      description: Load the execution info (auth, parameters) for a selected Jentic workflow.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the selected Jentic operation or workflow.
+  partner_ops:
+    - method: POST
+      path: /runs
+      name: createRun
+    - method: PATCH
+      path: /runs/{run_id}
+      name: updateRun
+
+- partner: openai
+  name: Wire Jentic execution into OpenAI function calling
+  category: Agent framework
+  use_case: When an OpenAI model emits a tool_call, resolve it through Jentic's search + load + execute pipeline and return the result as a tool message.
+  partner_baseUri: https://api.openai.com
+  partner_api: OpenAI Chat Completions API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for an API operation matching the OpenAI tool_call name.
+    - method: POST
+      path: /agents/load
+      name: loadExecutionInfo
+      description: Load execution info for the matched Jentic operation.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic operation and capture the result.
+  partner_ops:
+    - method: POST
+      path: /v1/chat/completions
+      name: createChatCompletion
+
+- partner: anthropic
+  name: Resolve Anthropic tool_use blocks via Jentic
+  category: Agent framework
+  use_case: When Claude returns a tool_use block, search Jentic for the matching API operation, execute it, and return the result as a tool_result message.
+  partner_baseUri: https://api.anthropic.com
+  partner_api: Anthropic Messages API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the API workflow named in the Claude tool_use block.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the resolved Jentic operation and capture the tool_result.
+  partner_ops:
+    - method: POST
+      path: /v1/messages
+      name: createMessage
+
+# Workflow automation platforms (3)
+- partner: n8n
+  name: Run Jentic workflows from n8n nodes
+  category: Workflow automation
+  use_case: Trigger a Jentic API workflow from an n8n workflow node; n8n hands off Arazzo execution to Jentic and consumes the result downstream.
+  partner_baseUri: https://yourdomain.app.n8n.cloud
+  partner_api: n8n Webhook API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the workflow referenced by the n8n node parameters.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow on behalf of the n8n node.
+  partner_ops:
+    - method: POST
+      path: /webhook/{path}
+      name: invokeWorkflow
+
+- partner: zapier
+  name: Trigger Jentic workflows from Zapier Zaps
+  category: Workflow automation
+  use_case: When a Zapier Zap fires, hand the event payload to a Jentic workflow lookup-and-execute so any API in Jentic's catalog becomes a Zap action.
+  partner_baseUri: https://hooks.zapier.com
+  partner_api: Zapier Webhooks
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the workflow tied to this Zap action.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the matched Jentic workflow.
+  partner_ops:
+    - method: POST
+      path: /hooks/catch/{hook_id}/{token}
+      name: invokeHook
+
+- partner: power-automate
+  name: Execute Jentic workflows from Microsoft Power Automate
+  category: Workflow automation
+  use_case: Allow a Power Automate flow to call a Jentic-hosted workflow via HTTP action so enterprise process automation can reach any API in Jentic's catalog.
+  partner_baseUri: https://prod-00.westus.logic.azure.com
+  partner_api: Power Automate HTTP triggers
+  provider_ops:
+    - method: POST
+      path: /agents/load
+      name: loadExecutionInfo
+      description: Load execution info for the Jentic workflow referenced by the Power Automate flow.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow and return its result to the flow.
+  partner_ops:
+    - method: POST
+      path: /workflows/{workflow_id}/triggers/{trigger_name}/run
+      name: runFlow
+
+# API tooling (3)
+- partner: postman
+  name: Import Jentic-resolved workflows into Postman collections
+  category: API tooling
+  use_case: Search Jentic for an API workflow, load its execution info, and materialize the calls into a Postman Collection for human-driven exploration.
+  partner_baseUri: https://api.getpostman.com
+  partner_api: Postman API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for an API workflow matching the developer's intent.
+    - method: POST
+      path: /agents/load
+      name: loadExecutionInfo
+      description: Load the execution info to build a Postman collection from.
+  partner_ops:
+    - method: POST
+      path: /collections
+      name: createCollection
+
+- partner: spectral
+  name: Lint OpenAPI specs surfaced by Jentic search
+  category: API tooling
+  use_case: For every API spec Jentic surfaces in a workflow search, run Spectral lint and attach the report so downstream consumers can score spec quality.
+  partner_baseUri: https://api.stoplight.io
+  partner_api: Stoplight Spectral API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for APIs whose specs need linting.
+    - method: POST
+      path: /agents/load
+      name: loadExecutionInfo
+      description: Load execution info to discover the underlying OpenAPI spec URL.
+  partner_ops:
+    - method: POST
+      path: /v1/lint
+      name: lintSpec
+
+- partner: github-actions
+  name: Run Jentic workflows from GitHub Actions
+  category: API tooling
+  use_case: Trigger a Jentic workflow from a GitHub Actions job so CI/CD pipelines can call any API in Jentic's catalog without writing per-provider integration code.
+  partner_baseUri: https://api.github.com
+  partner_api: GitHub Actions API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the workflow named in the GitHub Actions step.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow from inside the Actions runner.
+  partner_ops:
+    - method: POST
+      path: /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches
+      name: dispatchWorkflow
+
+# Serverless runtimes (2)
+- partner: aws-lambda
+  name: Invoke Jentic workflows from AWS Lambda functions
+  category: Serverless runtime
+  use_case: Let an AWS Lambda function defer third-party API orchestration to Jentic by calling search + execute instead of bundling provider SDKs.
+  partner_baseUri: https://lambda.us-east-1.amazonaws.com
+  partner_api: AWS Lambda API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the workflow the Lambda needs to invoke.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow and return the result to the Lambda caller.
+  partner_ops:
+    - method: POST
+      path: /2015-03-31/functions/{FunctionName}/invocations
+      name: invokeFunction
+
+- partner: cloudflare-workers
+  name: Call Jentic workflows from Cloudflare Workers
+  category: Serverless runtime
+  use_case: Use Jentic as an external workflow engine for Cloudflare Workers so edge handlers don't need to bundle per-provider auth and SDKs.
+  partner_baseUri: https://api.cloudflare.com
+  partner_api: Cloudflare Workers API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the API workflow the Worker needs to call.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow at the edge.
+  partner_ops:
+    - method: POST
+      path: /client/v4/accounts/{account_id}/workers/scripts/{script_name}
+      name: deployScript
+
+# Collaboration (1)
+- partner: slack
+  name: Run Jentic workflows from Slack slash commands
+  category: Collaboration
+  use_case: Wire a Slack slash command to Jentic's search-and-execute pipeline so a Slack message can trigger any API workflow in Jentic's catalog.
+  partner_baseUri: https://slack.com
+  partner_api: Slack Web API
+  provider_ops:
+    - method: POST
+      path: /agents/search
+      name: searchApis
+      description: Search Jentic for the workflow named by the Slack slash command.
+    - method: POST
+      path: /agents/execute
+      name: executeOperation
+      description: Execute the Jentic workflow and post the result back to Slack.
+  partner_ops:
+    - method: POST
+      path: /api/chat.postMessage
+      name: postMessage

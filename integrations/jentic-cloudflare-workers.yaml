@@ -1,0 +1,122 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Call Jentic workflows from Cloudflare Workers
+  description: Use Jentic as an external workflow engine for Cloudflare Workers so edge handlers don't need to bundle per-provider auth and SDKs.
+  tags:
+  - Jentic
+  - Integration
+  - Serverless runtime
+  - cloudflare-workers
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    CLOUDFLARE_WORKERS_API_KEY: CLOUDFLARE_WORKERS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the API workflow the Worker needs to call.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic workflow at the edge.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: cloudflare-workers
+    baseUri: https://api.cloudflare.com
+    description: Cloudflare Workers API operations consumed by this integration.
+    resources:
+    - name: client-v4-accounts-account-id-workers-scripts-script-name
+      path: /client/v4/accounts/{account_id}/workers/scripts/{script_name}
+      operations:
+      - name: deployscript
+        method: POST
+        description: 'Cloudflare Workers API: deployScript'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          description: Path parameter account_id.
+          required: true
+        - name: script_name
+          in: path
+          type: string
+          description: Path parameter script_name.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-cloudflare-workers-mcp
+    description: MCP adapter for the jentic-cloudflare-workers integration.
+    tools:
+    - name: jentic_cloudflare_workers
+      description: Execute the jentic cloudflare workers integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-cloudflare-workers-rest
+    port: 8080
+    description: REST adapter for the jentic-cloudflare-workers integration.
+    resources:
+    - path: /jentic-cloudflare-workers
+      name: jentic-cloudflare-workers
+      description: REST surface for the jentic-cloudflare-workers integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-cloudflare-workers integration.
+        call: jentic_cloudflare_workers
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

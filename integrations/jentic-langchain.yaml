@@ -1,0 +1,151 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Expose Jentic workflows as LangChain tools
+  description: When a LangChain agent needs to call a third-party API, search Jentic's catalog, load the execution info, and execute the workflow as a LangChain Tool result.
+  tags:
+  - Jentic
+  - Integration
+  - Agent framework
+  - langchain
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    LANGCHAIN_API_KEY: LANGCHAIN_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic's API catalog for a workflow matching the agent's intent.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Load the execution info (auth, parameters) for a selected Jentic workflow.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the selected Jentic operation or workflow.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: langchain
+    baseUri: https://api.smith.langchain.com
+    description: LangSmith Runs API operations consumed by this integration.
+    resources:
+    - name: runs
+      path: /runs
+      operations:
+      - name: createrun
+        method: POST
+        description: 'LangSmith Runs API: createRun'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: runs-run-id
+      path: /runs/{run_id}
+      operations:
+      - name: updaterun
+        method: PATCH
+        description: 'LangSmith Runs API: updateRun'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: run_id
+          in: path
+          type: string
+          description: Path parameter run_id.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-langchain-mcp
+    description: MCP adapter for the jentic-langchain integration.
+    tools:
+    - name: jentic_langchain
+      description: Execute the jentic langchain integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-langchain-rest
+    port: 8080
+    description: REST adapter for the jentic-langchain integration.
+    resources:
+    - path: /jentic-langchain
+      name: jentic-langchain
+      description: REST surface for the jentic-langchain integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-langchain integration.
+        call: jentic_langchain
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

@@ -1,0 +1,129 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Wire Jentic execution into OpenAI function calling
+  description: When an OpenAI model emits a tool_call, resolve it through Jentic's search + load + execute pipeline and return the result as a tool message.
+  tags:
+  - Jentic
+  - Integration
+  - Agent framework
+  - openai
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    OPENAI_API_KEY: OPENAI_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for an API operation matching the OpenAI tool_call name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-load
+      path: /agents/load
+      operations:
+      - name: loadexecutioninfo
+        method: POST
+        description: Load execution info for the matched Jentic operation.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic operation and capture the result.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: openai
+    baseUri: https://api.openai.com
+    description: OpenAI Chat Completions API operations consumed by this integration.
+    resources:
+    - name: v1-chat-completions
+      path: /v1/chat/completions
+      operations:
+      - name: createchatcompletion
+        method: POST
+        description: 'OpenAI Chat Completions API: createChatCompletion'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-openai-mcp
+    description: MCP adapter for the jentic-openai integration.
+    tools:
+    - name: jentic_openai
+      description: Execute the jentic openai integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-openai-rest
+    port: 8080
+    description: REST adapter for the jentic-openai integration.
+    resources:
+    - path: /jentic-openai
+      name: jentic-openai
+      description: REST surface for the jentic-openai integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-openai integration.
+        call: jentic_openai
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

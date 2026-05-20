@@ -1,0 +1,112 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Run Jentic workflows from Slack slash commands
+  description: Wire a Slack slash command to Jentic's search-and-execute pipeline so a Slack message can trigger any API workflow in Jentic's catalog.
+  tags:
+  - Jentic
+  - Integration
+  - Collaboration
+  - slack
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    SLACK_API_KEY: SLACK_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the workflow named by the Slack slash command.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic workflow and post the result back to Slack.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: slack
+    baseUri: https://slack.com
+    description: Slack Web API operations consumed by this integration.
+    resources:
+    - name: api-chat-postmessage
+      path: /api/chat.postMessage
+      operations:
+      - name: postmessage
+        method: POST
+        description: 'Slack Web API: postMessage'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-slack-mcp
+    description: MCP adapter for the jentic-slack integration.
+    tools:
+    - name: jentic_slack
+      description: Execute the jentic slack integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-slack-rest
+    port: 8080
+    description: REST adapter for the jentic-slack integration.
+    resources:
+    - path: /jentic-slack
+      name: jentic-slack
+      description: REST surface for the jentic-slack integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-slack integration.
+        call: jentic_slack
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.

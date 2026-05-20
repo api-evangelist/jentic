@@ -1,0 +1,127 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Run Jentic workflows from GitHub Actions
+  description: Trigger a Jentic workflow from a GitHub Actions job so CI/CD pipelines can call any API in Jentic's catalog without writing per-provider integration code.
+  tags:
+  - Jentic
+  - Integration
+  - API tooling
+  - github-actions
+  created: '2026-05-20'
+  modified: '2026-05-20'
+binds:
+- namespace: env
+  keys:
+    JENTIC_API_KEY: JENTIC_API_KEY
+    GITHUB_ACTIONS_API_KEY: GITHUB_ACTIONS_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: jentic
+    baseUri: https://api.jentic.com
+    description: Jentic API operations consumed by this integration.
+    resources:
+    - name: agents-search
+      path: /agents/search
+      operations:
+      - name: searchapis
+        method: POST
+        description: Search Jentic for the workflow named in the GitHub Actions step.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: agents-execute
+      path: /agents/execute
+      operations:
+      - name: executeoperation
+        method: POST
+        description: Execute the Jentic workflow from inside the Actions runner.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  - type: http
+    namespace: github-actions
+    baseUri: https://api.github.com
+    description: GitHub Actions API operations consumed by this integration.
+    resources:
+    - name: repos-owner-repo-actions-workflows-workflow-id-dispatches
+      path: /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches
+      operations:
+      - name: dispatchworkflow
+        method: POST
+        description: 'GitHub Actions API: dispatchWorkflow'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: owner
+          in: path
+          type: string
+          description: Path parameter owner.
+          required: true
+        - name: repo
+          in: path
+          type: string
+          description: Path parameter repo.
+          required: true
+        - name: workflow_id
+          in: path
+          type: string
+          description: Path parameter workflow_id.
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: mcp
+    namespace: jentic-github-actions-mcp
+    description: MCP adapter for the jentic-github-actions integration.
+    tools:
+    - name: jentic_github_actions
+      description: Execute the jentic github actions integration end-to-end.
+      inputSchema:
+        type: object
+        properties:
+          trigger_event:
+            type: object
+            description: Triggering event payload.
+        required:
+        - trigger_event
+  - type: rest
+    namespace: jentic-github-actions-rest
+    port: 8080
+    description: REST adapter for the jentic-github-actions integration.
+    resources:
+    - path: /jentic-github-actions
+      name: jentic-github-actions
+      description: REST surface for the jentic-github-actions integration.
+      operations:
+      - method: POST
+        name: trigger
+        description: Trigger the jentic-github-actions integration.
+        call: jentic_github_actions
+        with:
+          trigger_event: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
