@@ -3,19 +3,16 @@
   "feeds": [
     {
       "source": "https://jentic.com/blog",
-      "feed_url": "",
+      "feed_url": "https://jentic.com/blog",
       "title": "",
       "saved": 0,
-      "error": "no_feed"
+      "method": "none"
     },
     {
       "source": "https://jentic.com/blog/feed.xml",
-      "feed_url": "",
-      "title": "",
-      "saved": 0,
-      "error": "no_feed"
+      "error": "HTTPError"
     }
   ],
-  "fetched": "2026-05-17T20:48:52Z",
+  "fetched": "2026-06-01T23:35:02Z",
   "post_count": 0
 }
