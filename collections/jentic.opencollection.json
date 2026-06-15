@@ -1,0 +1,102 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Jentic API",
+    "version": "1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-JENTIC-API-KEY",
+      "value": "{{X-JENTIC-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Register A New Jentic Account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/auth/register",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Registers a new account with the Jentic platform and returns an API key. An optional email address can be provided to receive higher rate limits. The returned API key must be stored securely and used in subsequent requests via the `X-JENTIC-API-KEY` header."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search For APIs And Workflows",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/agents/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Searches the Jentic catalog for APIs and workflows that match the provided natural language query. Results are semantically ranked based on relevance. Returns operation identifiers prefixed `op_` (single OpenAPI operations) or `wf_` (Arazzo workflows) that can be passed to the load and execute endpoints. Supports limiting the number of results returned."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Execution",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Load Execution Information For Operations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/agents/load",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieves the full execution specification for one or more API operations or Arazzo workflows from the Jentic catalog. Returns HTTP method, path, input JSON Schema, authentication requirements, and other metadata needed to call the operation. Use the UUIDs returned from the search endpoint."
+        },
+        {
+          "info": {
+            "name": "Execute An API Operation Or Workflow",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/agents/execute",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Executes a specific API operation or Arazzo workflow through the Jentic platform. Credentials for the upstream API are injected server-side by Jentic and are never sent to or stored by the agent. The operation or workflow is identified by its UUID, and the required inputs must match the JSON Schema returned by the load endpoint. Supports both single OpenAPI operations (`execution_type: operation`) and multi-step Arazzo workflows (`execution_type: workflow`)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

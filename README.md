@@ -1,10 +1,8 @@
 # Jentic (jentic)
 
-Jentic is an AI infrastructure company building the agentic knowledge layer for APIs. Founded in late 2024 in Dublin, Ireland and backed by $4.5M in pre-seed funding, Jentic enables enterprises to confidently manage, scale, and govern AI agent initiatives in a unified platform built on open standards. The platform provides secure execution, managed authentication, unified permissions, and observability for AI agents accessing 1,500+ public APIs and 2,000+ agent-ready Arazzo workflows.
+Jentic is an AI infrastructure company building the agentic knowledge layer for APIs. Founded in late 2024 and backed by $4.5M in pre-seed funding, Jentic enables enterprises to confidently manage, scale, and govern AI agent initiatives in a unified platform built on open standards. The platform provides secure execution, managed authentication, unified permissions, and observability for AI agents accessing 1,500+ public APIs and 2,000+ agent-ready workflows. Jentic's bet is that AI agents need a standards-based control plane built on OpenAPI plus Arazzo workflows plus MCP, rather than ad-hoc tool wiring inside every agent framework. The platform ships the Jentic Public APIs catalog, the Arazzo Engine (workflow runner), the Standard Agent (a composable ReWOO-style reasoning agent), the Jentic Mini self-hosted execution layer, a hosted Remote MCP server at api.jentic.com/mcp, and the Jentic API AI-Readiness Framework (JAIRF) for scoring API readiness for agents.
 
-Jentic's bet is that AI agents need a standards-based control plane built on **OpenAPI + Arazzo workflows + Model Context Protocol**, rather than ad-hoc tool wiring inside every agent framework. The platform ships the Jentic Public APIs catalog, the Arazzo Engine (workflow runner), the Standard Agent (a composable ReWOO-style reasoning agent), the Jentic Mini self-hosted execution layer, a hosted Remote MCP server at `api.jentic.com/mcp`, and the Jentic API AI-Readiness Framework (JAIRF) for scoring API readiness for agents.
-
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/jentic/refs/heads/main/apis.yml)
+**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/jentic/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/jentic/refs/heads/main/apis.yml)
 
 ## Scope
 
@@ -31,109 +29,147 @@ Jentic's bet is that AI agents need a standards-based control plane built on **O
 ## Timestamps
 
 - **Created:** 2026-01-02
-- **Modified:** 2026-05-15
+- **Modified:** 2026-05-19
 
 ## APIs
 
 ### Jentic API
 
-The hosted agent control plane. A small, stable surface that lets any agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. Canonical flow: `search → load → execute`. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`).
+The Jentic API is the hosted agent control plane. It exposes a small, stable surface that lets any agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. Authentication uses an agent-scoped API key (X-JENTIC-API-KEY). The canonical flow is search to load to execute: search the catalog by natural language, load the schema and auth requirements for the returned operation or workflow UUIDs, and execute with managed server-side credential injection. Operation UUIDs are prefixed op_ and workflow UUIDs are prefixed wf_, and both are accepted by the execute endpoint.
 
-- **Human URL:** https://docs.jentic.com/reference/public-apis/
-- **Base URL:** https://api.jentic.com/api/v1
-- **OpenAPI:** [openapi/jentic-openapi.yml](openapi/jentic-openapi.yml)
+- **Human URL:** [https://docs.jentic.com/reference/public-apis/](https://docs.jentic.com/reference/public-apis/)
+- **Base URL:** `https://api.jentic.com/api/v1`
 
-#### Endpoints
+#### Tags
 
-| Method | Path | OperationId | Summary |
-|---|---|---|---|
-| POST | `/auth/register` | registerAccount | Register A New Jentic Account |
-| POST | `/agents/search` | searchApis | Search For APIs And Workflows |
-| POST | `/agents/load` | loadExecutionInfo | Load Execution Information For Operations |
-| POST | `/agents/execute` | executeOperation | Execute An API Operation Or Workflow |
+- AI Agents
+- Arazzo
+- OpenAPI
+- Workflows
+- Integrations
+- MCP
+- Agent Runtime
+
+#### Properties
+
+- [Website](https://jentic.com/)
+- [Documentation](https://docs.jentic.com/)
+- [Getting Started](https://docs.jentic.com/getting-started/quickstart/)
+- [API Reference](https://docs.jentic.com/reference/public-apis/)
+- [Sign Up](https://app.jentic.com/sign-up)
+- [Console](https://app.jentic.com/)
+- [Base U R L](https://api.jentic.com/api/v1)
+- [OpenAPI](openapi/jentic-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Spectral Rules](rules/jentic-rules.yml)
+- [JSON Schema](json-schema/jentic-operation-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [JSON Schema](json-schema/jentic-agent-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [JSON Schema](json-schema/jentic-workflow-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [JSON Structure](json-structure/jentic-operation-structure.json)
+- [Example](examples/jentic-search-example.json)
+- [Example](examples/jentic-load-example.json)
+- [Example](examples/jentic-execute-example.json)
+- [Example](examples/jentic-register-example.json)
 
 ### Jentic Remote MCP Server
 
-The hosted Model Context Protocol endpoint at `https://api.jentic.com/mcp`. Exposes `search_apis`, `load_execution_info`, `execute`, and `list_credentials` to MCP-capable clients. OAuth 2.0 with PKCE and dynamic client registration recommended; API-key fallback supported for Cursor and Windsurf.
+The Jentic Remote MCP Server is the hosted Model Context Protocol endpoint that exposes the Jentic catalog to MCP-capable clients (Claude Desktop, ChatGPT, Cursor, Windsurf, VS Code). It speaks the same search / load / execute pattern as the Jentic API, but packaged as MCP tools. Supports OAuth 2.0 with PKCE and dynamic client registration, with an API key fallback for Cursor and Windsurf.
 
-| Client | OAuth | API Key |
-|---|---|---|
-| Claude Desktop | yes | — |
-| ChatGPT | yes | — |
-| Cursor | yes | yes |
-| Windsurf | yes | yes |
-| VS Code | local | local |
+- **Human URL:** [https://docs.jentic.com/guides/mcp/remote-mcp/](https://docs.jentic.com/guides/mcp/remote-mcp/)
+- **Base URL:** `https://api.jentic.com/mcp`
+
+#### Tags
+
+- MCP
+- AI Agents
+- OAuth
+- Remote MCP
+
+#### Properties
+
+- [Documentation](https://docs.jentic.com/guides/mcp/)
+- [Getting Started](https://docs.jentic.com/guides/mcp/remote-mcp/)
+- [Base U R L](https://api.jentic.com/mcp)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
 ### Arazzo Engine
 
-Open-source Python engine that executes Arazzo workflow specifications alongside OpenAPI operation definitions. Powers Jentic's server-side workflow execution and is installable standalone as `arazzo-runner`. Handles authentication resolution (API key, OAuth 2.0, basic, bearer), dynamic server URL resolution, parameter chaining, and blob storage for large payloads.
+Open-source Python engine that executes Arazzo workflow specifications alongside OpenAPI operation definitions. Powers the Jentic platform's workflow execution and is also installable standalone as arazzo-runner for direct use in agents and automation. Handles authentication resolution (API key, OAuth 2.0, basic, bearer), dynamic server URL resolution, parameter chaining between steps, and blob storage for large binary payloads.
 
-- **Source:** https://github.com/jentic/arazzo-engine
-- **Install:** `pip install arazzo-runner`
+- **Human URL:** [https://github.com/jentic/arazzo-engine](https://github.com/jentic/arazzo-engine)
+
+#### Tags
+
+- Arazzo
+- OpenAPI
+- Workflows
+- Open Source
+
+#### Properties
+
+- [Source Code](https://github.com/jentic/arazzo-engine)
+- [Documentation](https://docs.jentic.com/getting-started/arazzo-runner/)
+- [Python Package](https://pypi.org/project/arazzo-runner/)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
 ### Jentic Standard Agent
 
-Open-source composable reasoning agent framework that plans, acts, and recovers from failures, preconfigured with Jentic tools and a ReWOO reasoning loop. Primary class `ReWOOAgent`. Bring-your-own LLM (Anthropic, OpenAI, Google).
+Open-source composable reasoning agent framework that plans, acts, and recovers from failures, preconfigured with Jentic tools and a ReWOO reasoning loop. Primary entry point is the ReWOOAgent Python class. Bring-your-own LLM (Anthropic, OpenAI, Google). Demonstrates how to build an agent that uses Jentic's just-in-time tooling without committing to a specific agent framework.
 
-- **Source:** https://github.com/jentic/standard-agent
+- **Human URL:** [https://github.com/jentic/standard-agent](https://github.com/jentic/standard-agent)
+
+#### Tags
+
+- Agent Framework
+- ReWOO
+- Open Source
+- Python
+
+#### Properties
+
+- [Source Code](https://github.com/jentic/standard-agent)
+- [Documentation](https://docs.jentic.com/getting-started/standard-agent/)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
 ### Jentic Mini
 
-Free, open-source, self-hosted API execution layer that sits between an agent and the outside world. Intended for teams that want Jentic's execution model without sending traffic through the hosted Jentic API.
+Free, open-source, self-hosted API execution layer that sits between an agent and the outside world. The agent says what it wants to do and Jentic Mini handles the how: finding the right API, injecting credentials at runtime, and brokering the request. Intended for teams that want Jentic's execution model without sending traffic through the hosted Jentic API.
 
-- **Source:** https://github.com/jentic/jentic-mini
+- **Human URL:** [https://github.com/jentic/jentic-mini](https://github.com/jentic/jentic-mini)
+
+#### Tags
+
+- Self Hosted
+- Open Source
+- Agent Runtime
+
+#### Properties
+
+- [Source Code](https://github.com/jentic/jentic-mini)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
 ### Jentic API AI-Readiness Framework (JAIRF)
 
-Technical specification for evaluating how interpretable, operable, and trustworthy an API is for AI systems and autonomous agents. Defines the signals, dimensions, scoring model, and normalization rules used by the Jentic API Scorecard product.
+Technical specification for evaluating how interpretable, operable, and trustworthy an API is for AI systems and autonomous agents. Defines the signals, dimensions, scoring model, and normalization rules used by the Jentic API Scorecard product. Apache 2.0.
 
-- **Source:** https://github.com/jentic/api-ai-readiness-framework
+- **Human URL:** [https://github.com/jentic/api-ai-readiness-framework](https://github.com/jentic/api-ai-readiness-framework)
 
-## SDKs And Tools
+#### Tags
 
-| Name | Repository | Language | Install |
-|---|---|---|---|
-| Jentic Python SDK | https://github.com/jentic/jentic-sdks | Python | `pip install jentic` |
-| Jentic TypeScript SDK | (not yet available) | TypeScript | — |
-| Arazzo Runner | https://github.com/jentic/arazzo-engine | Python | `pip install arazzo-runner` |
-| Jentic Mini | https://github.com/jentic/jentic-mini | Python | — |
-| Standard Agent | https://github.com/jentic/standard-agent | Python | `make install` |
-| Jentic OpenAPI Tools | https://github.com/jentic/jentic-openapi-tools | Python | — |
-| Jentic Arazzo Tools | https://github.com/jentic/jentic-arazzo-tools | TypeScript | — |
-| Jentic Skills (OpenClaw) | https://github.com/jentic/jentic-skills | Python | — |
-| Jentic Quick Claw | https://github.com/jentic/jentic-quick-claw | Shell | — |
-| Jentic Cursor | https://github.com/jentic/jentic-cursor | JavaScript | — |
-| API Problem Details | https://github.com/jentic/api-problem-details | Python | — |
+- Specification
+- API AI Readiness
+- Open Source
 
-## Editions
+#### Properties
 
-| Edition | Price | Notes |
-|---|---|---|
-| Core | Free | Single-user. Public APIs catalog. AI-readiness diagnostics. Platform-managed execution. |
-| Enterprise | Contact sales | Agentic Sandbox, private API ingestion, governance, VPC/customer-managed hosting, SLAs, dedicated support. |
-
-Detailed plan entries: [plans/jentic-plans-pricing.yml](plans/jentic-plans-pricing.yml). Rate limits: [rate-limits/jentic-rate-limits.yml](rate-limits/jentic-rate-limits.yml). FinOps mapping: [finops/jentic-finops.yml](finops/jentic-finops.yml). Both plans and rate-limits files carry `reconciled: false` because Jentic does not publish numeric quotas.
-
-## Artifacts
-
-- **OpenAPI:** [openapi/jentic-openapi.yml](openapi/jentic-openapi.yml)
-- **Naftiko Capabilities:**
-  - [capabilities/jentic-capability.yaml](capabilities/jentic-capability.yaml)
-  - [capabilities/arazzo-workflow-execution.yaml](capabilities/arazzo-workflow-execution.yaml)
-  - [capabilities/agent-tool-discovery.yaml](capabilities/agent-tool-discovery.yaml)
-  - [capabilities/mcp-publishing.yaml](capabilities/mcp-publishing.yaml)
-- **JSON Schema:**
-  - [json-schema/jentic-operation-schema.json](json-schema/jentic-operation-schema.json)
-  - [json-schema/jentic-workflow-schema.json](json-schema/jentic-workflow-schema.json)
-  - [json-schema/jentic-agent-schema.json](json-schema/jentic-agent-schema.json)
-- **JSON Structure:** [json-structure/jentic-operation-structure.json](json-structure/jentic-operation-structure.json)
-- **JSON-LD:** [json-ld/jentic-context.jsonld](json-ld/jentic-context.jsonld)
-- **Vocabulary:** [vocabulary/jentic-vocabulary.yml](vocabulary/jentic-vocabulary.yml)
-- **Spectral Rules:** [rules/jentic-rules.yml](rules/jentic-rules.yml)
-- **Examples:** [examples/](examples/) — register, search, load, execute (operation), execute (workflow)
-- **Plans / Pricing:** [plans/jentic-plans-pricing.yml](plans/jentic-plans-pricing.yml)
-- **Rate Limits:** [rate-limits/jentic-rate-limits.yml](rate-limits/jentic-rate-limits.yml)
-- **FinOps:** [finops/jentic-finops.yml](finops/jentic-finops.yml)
+- [Source Code](https://github.com/jentic/api-ai-readiness-framework)
+- [Postman Collection](collections/jentic.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/jentic.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
 ## Common Properties
 
@@ -141,19 +177,29 @@ Detailed plan entries: [plans/jentic-plans-pricing.yml](plans/jentic-plans-prici
 - [Blog](https://jentic.com/blog)
 - [Documentation](https://docs.jentic.com/)
 - [Pricing](https://jentic.com/pricing)
-- [SignUp](https://app.jentic.com/sign-up)
+- [Sign Up](https://app.jentic.com/sign-up)
 - [Console](https://app.jentic.com/)
 - [Contact](https://jentic.com/contact)
 - [About](https://jentic.com/company)
-- [GitHubOrganization](https://github.com/jentic)
-- [PrivacyPolicy](https://jentic.com/privacy)
-- [TermsOfService](https://jentic.com/terms)
+- [GitHub Organization](https://github.com/jentic)
+- [Privacy Policy](https://jentic.com/privacy)
+- [Terms of Service](https://jentic.com/terms)
 - [LinkedIn](https://www.linkedin.com/company/jentic)
 - [YouTube](https://youtube.com/@JenticAI)
 - [Support](https://docs.jentic.com/community/support/)
-- [FAQ](https://docs.jentic.com/community/faq/)
+- [F A Q](https://docs.jentic.com/community/faq/)
 - [Security](https://docs.jentic.com/community/security/)
-- [PythonPackage](https://pypi.org/project/jentic/)
+- [Contributing](https://docs.jentic.com/community/contributing/)
+- [Press](https://jentic.com/blog/press)
+- [Blog Feed](https://jentic.com/blog/feed.xml)
+- [Python Package](https://pypi.org/project/jentic/)
+- [Python Package](https://pypi.org/project/arazzo-runner/)
+- [Vocabulary](vocabulary/jentic-vocabulary.yml)
+- [JSON-LD](json-ld/jentic-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
+- [JSON Schema](json-schema/jentic-operation-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [JSON Schema](json-schema/jentic-agent-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [JSON Schema](json-schema/jentic-workflow-schema.json) — [JSON Schema](https://json-schema.org/specification)
+- [Agent Skill](https://github.com/jentic/jentic-skills)
 
 ## Maintainers
 
