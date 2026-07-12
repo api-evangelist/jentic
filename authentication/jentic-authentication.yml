@@ -1,0 +1,18 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/jentic-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-JENTIC-API-KEY
+  description: Agent-scoped API key obtained either by calling `/auth/register` or by clicking
+    Generate API Key on an agent in the Jentic console at app.jentic.com. The key authorizes
+    only the APIs and workflows in that agent's scope.
+  sources:
+  - openapi/jentic-openapi.yml
