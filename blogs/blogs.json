@@ -3,17 +3,17 @@
   "feeds": [
     {
       "source": "https://jentic.com/blog",
-      "feed_url": "",
-      "saved": 1,
-      "method": "agent-scrape"
+      "feed_url": "https://jentic.com/blog",
+      "title": "",
+      "saved": 0,
+      "method": "none"
     },
     {
       "source": "https://jentic.com/blog/feed.xml",
-      "saved": 0,
       "error": "HTTPError"
     }
   ],
   "post_count": 2,
-  "fetched": "2026-06-27T12:48:48Z",
+  "fetched": "2026-07-11T11:50:51Z",
   "agent_pulled": "2026-06-27"
 }
