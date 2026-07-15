@@ -343,6 +343,8 @@ apis:
       - url: https://github.com/jentic/api-ai-readiness-framework
         type: SourceCode
 common:
+  - type: AgenticAccess
+    url: agentic-access/jentic-agentic-access.yml
   - type: DomainSecurity
     url: security/jentic-domain-security.yml
   - type: Authentication
