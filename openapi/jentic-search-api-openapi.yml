@@ -1,0 +1,155 @@
+openapi: 3.1.0
+info:
+  title: Jentic Authentication Search API
+  description: The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.
+  version: '1'
+  contact:
+    name: Jentic Support
+    url: https://docs.jentic.com/community/support/
+  termsOfService: https://jentic.com/terms
+  license:
+    name: Jentic Terms of Service
+    url: https://jentic.com/terms
+servers:
+- url: https://api.jentic.com/api/v1
+  description: Production
+security:
+- apiKeyAuth: []
+tags:
+- name: Search
+  description: Semantic search over the Jentic API and workflow catalog using natural language queries.
+paths:
+  /agents/search:
+    post:
+      operationId: searchApis
+      summary: Search For APIs And Workflows
+      description: Searches the Jentic catalog for APIs and workflows that match the provided natural language query. Results are semantically ranked based on relevance. Returns operation identifiers prefixed `op_` (single OpenAPI operations) or `wf_` (Arazzo workflows) that can be passed to the load and execute endpoints. Supports limiting the number of results returned.
+      tags:
+      - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+            examples:
+              email:
+                summary: Search for an email-sending capability
+                value:
+                  query: send an email
+                  limit: 3
+              restaurant:
+                summary: Search for a restaurant lookup workflow
+                value:
+                  query: find a restaurant in Dublin
+                  limit: 5
+      responses:
+        '200':
+          description: Search results returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    SearchResult:
+      type: object
+      description: A single search result representing an API operation or workflow.
+      properties:
+        uuid:
+          type: string
+          pattern: ^(op_|wf_).+
+          description: Unique identifier for the operation, prefixed `op_` for single OpenAPI operations or `wf_` for Arazzo workflows.
+        name:
+          type: string
+          description: Human-readable name of the operation or workflow.
+        description:
+          type: string
+          description: Detailed description of what the operation does.
+        api_name:
+          type: string
+          description: Name of the upstream API that provides this operation.
+        type:
+          type: string
+          enum:
+          - operation
+          - workflow
+          description: Whether this result is an individual OpenAPI operation or a multi-step Arazzo workflow.
+        score:
+          type: number
+          format: float
+          description: Semantic relevance score indicating how well this result matches the search query.
+    SearchResponse:
+      type: object
+      description: Response containing semantically ranked search results from the Jentic catalog.
+      properties:
+        results:
+          type: array
+          description: List of matching API operations and workflows, ranked by semantic relevance.
+          items:
+            $ref: '#/components/schemas/SearchResult'
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details when available.
+    SearchRequest:
+      type: object
+      description: Request body for searching the Jentic API catalog using a natural language query.
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          description: Natural language query describing the desired capability (e.g. "send an email", "find a restaurant in Dublin", "create a Linear issue").
+        limit:
+          type: integer
+          minimum: 1
+          default: 5
+          description: Maximum number of search results to return.
+  responses:
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-JENTIC-API-KEY
+      description: Agent-scoped API key obtained either by calling `/auth/register` or by clicking Generate API Key on an agent in the Jentic console at app.jentic.com. The key authorizes only the APIs and workflows in that agent's scope.
+externalDocs:
+  description: Jentic Documentation
+  url: https://docs.jentic.com/

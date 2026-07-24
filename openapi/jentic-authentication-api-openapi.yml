@@ -1,0 +1,117 @@
+openapi: 3.1.0
+info:
+  title: Jentic Authentication API
+  description: The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.
+  version: '1'
+  contact:
+    name: Jentic Support
+    url: https://docs.jentic.com/community/support/
+  termsOfService: https://jentic.com/terms
+  license:
+    name: Jentic Terms of Service
+    url: https://jentic.com/terms
+servers:
+- url: https://api.jentic.com/api/v1
+  description: Production
+security:
+- apiKeyAuth: []
+tags:
+- name: Authentication
+  description: Registration and API key management for accessing the Jentic platform.
+paths:
+  /auth/register:
+    post:
+      operationId: registerAccount
+      summary: Register A New Jentic Account
+      description: Registers a new account with the Jentic platform and returns an API key. An optional email address can be provided to receive higher rate limits. The returned API key must be stored securely and used in subsequent requests via the `X-JENTIC-API-KEY` header.
+      tags:
+      - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              anonymous:
+                summary: Anonymous registration
+                value: {}
+              withEmail:
+                summary: Registration with email
+                value:
+                  email: agent-owner@example.com
+      responses:
+        '200':
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+              example:
+                api_key: jen_live_8K7vBxAQ2y1eDqU5wRpL9z0c
+                uuid: 7c3e8d10-6b9a-4f5d-8e21-1a7c4b9d0fe2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+components:
+  schemas:
+    RegisterResponse:
+      type: object
+      description: Response containing the newly generated API key and account details.
+      required:
+      - api_key
+      properties:
+        api_key:
+          type: string
+          description: The generated API key to use in subsequent requests via the `X-JENTIC-API-KEY` header.
+        uuid:
+          type: string
+          description: The unique identifier for the registered account.
+    RegisterRequest:
+      type: object
+      description: Request body for registering a new Jentic account.
+      properties:
+        email:
+          type: string
+          format: email
+          description: Optional email address for the account. Providing an email grants higher rate limits.
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details when available.
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-JENTIC-API-KEY
+      description: Agent-scoped API key obtained either by calling `/auth/register` or by clicking Generate API Key on an agent in the Jentic console at app.jentic.com. The key authorizes only the APIs and workflows in that agent's scope.
+externalDocs:
+  description: Jentic Documentation
+  url: https://docs.jentic.com/

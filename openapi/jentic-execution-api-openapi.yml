@@ -1,0 +1,236 @@
+openapi: 3.1.0
+info:
+  title: Jentic Authentication Execution API
+  description: The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.
+  version: '1'
+  contact:
+    name: Jentic Support
+    url: https://docs.jentic.com/community/support/
+  termsOfService: https://jentic.com/terms
+  license:
+    name: Jentic Terms of Service
+    url: https://jentic.com/terms
+servers:
+- url: https://api.jentic.com/api/v1
+  description: Production
+security:
+- apiKeyAuth: []
+tags:
+- name: Execution
+  description: Load execution details and execute API operations or Arazzo workflows with managed authentication and credential injection.
+paths:
+  /agents/load:
+    post:
+      operationId: loadExecutionInfo
+      summary: Load Execution Information For Operations
+      description: Retrieves the full execution specification for one or more API operations or Arazzo workflows from the Jentic catalog. Returns HTTP method, path, input JSON Schema, authentication requirements, and other metadata needed to call the operation. Use the UUIDs returned from the search endpoint.
+      tags:
+      - Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadRequest'
+            example:
+              ids:
+              - op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c
+              - wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60
+      responses:
+        '200':
+          description: Execution information loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoadResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /agents/execute:
+    post:
+      operationId: executeOperation
+      summary: Execute An API Operation Or Workflow
+      description: 'Executes a specific API operation or Arazzo workflow through the Jentic platform. Credentials for the upstream API are injected server-side by Jentic and are never sent to or stored by the agent. The operation or workflow is identified by its UUID, and the required inputs must match the JSON Schema returned by the load endpoint. Supports both single OpenAPI operations (`execution_type: operation`) and multi-step Arazzo workflows (`execution_type: workflow`).'
+      tags:
+      - Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+            examples:
+              singleOperation:
+                summary: Execute a single API operation
+                value:
+                  execution_type: operation
+                  uuid: op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c
+                  inputs:
+                    to: friend@example.com
+                    subject: Hello from Jentic
+                    body: This was sent by an agent.
+              arazzoWorkflow:
+                summary: Execute a multi-step Arazzo workflow
+                value:
+                  execution_type: workflow
+                  uuid: wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60
+                  inputs:
+                    city: Dublin
+                    party_size: 2
+      responses:
+        '200':
+          description: Operation executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Unprocessable Entity — missing or invalid inputs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: Upstream API Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ToolInfo:
+      type: object
+      description: Detailed execution information for a single operation or workflow.
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        path:
+          type: string
+          description: URL path template for the upstream API operation.
+        inputs:
+          type: object
+          additionalProperties: true
+          description: JSON Schema describing the required and optional input parameters for the operation.
+        auth_required:
+          type: boolean
+          description: Whether this operation requires upstream API credentials to be configured in the Jentic credential vault.
+    LoadResponse:
+      type: object
+      description: Response containing detailed execution information keyed by UUID.
+      properties:
+        tool_info:
+          type: object
+          description: Map of operation UUIDs to their detailed execution information including input JSON Schema, HTTP method, path, and authentication requirements.
+          additionalProperties:
+            $ref: '#/components/schemas/ToolInfo'
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details when available.
+    ExecutionRequest:
+      type: object
+      description: Request body for executing an API operation or Arazzo workflow through the Jentic platform.
+      required:
+      - execution_type
+      - uuid
+      properties:
+        execution_type:
+          type: string
+          enum:
+          - operation
+          - workflow
+          description: Whether to execute a single OpenAPI operation or a multi-step Arazzo workflow.
+        uuid:
+          type: string
+          pattern: ^(op_|wf_).+
+          description: The unique identifier of the operation or workflow to execute, as returned by `/agents/search`.
+        inputs:
+          type: object
+          additionalProperties: true
+          description: Input parameters for the operation, matching the JSON Schema returned by `/agents/load`.
+    ExecutionResponse:
+      type: object
+      description: Response containing the results of executing an API operation or workflow.
+      properties:
+        output:
+          description: The output data returned by the executed operation or workflow. Structure varies depending on the upstream API.
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: The execution status.
+        execution_id:
+          type: string
+          description: Unique identifier for this execution, useful for debugging and observability.
+    LoadRequest:
+      type: object
+      description: Request body for loading detailed execution information for one or more operations.
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          minItems: 1
+          description: List of operation or workflow UUIDs (from `/agents/search`) to load execution information for.
+          items:
+            type: string
+  responses:
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Operation Or Workflow Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-JENTIC-API-KEY
+      description: Agent-scoped API key obtained either by calling `/auth/register` or by clicking Generate API Key on an agent in the Jentic console at app.jentic.com. The key authorizes only the APIs and workflows in that agent's scope.
+externalDocs:
+  description: Jentic Documentation
+  url: https://docs.jentic.com/
