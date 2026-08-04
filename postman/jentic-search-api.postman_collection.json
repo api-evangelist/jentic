@@ -1,0 +1,332 @@
+{
+  "info": {
+    "_postman_id": "a1abd4c2-bfbb-45ca-a6b8-5bd94cf8f8f0",
+    "name": "Jentic Authentication Search API",
+    "description": "The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search \u2192 load \u2192 execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.\n\nContact Support:\n Name: Jentic Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:59:41.000Z",
+    "updatedAt": "2026-07-28T01:59:41.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-a1abd4c2-bfbb-45ca-a6b8-5bd94cf8f8f0"
+  },
+  "item": [
+    {
+      "name": "agents",
+      "item": [
+        {
+          "name": "search",
+          "item": [
+            {
+              "name": "Search For APIs And Workflows",
+              "id": "d3ddd3f1-608e-48ca-b52f-2a9fa5745381",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"<string>\",\n  \"limit\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/agents/search",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "agents",
+                    "search"
+                  ]
+                },
+                "description": "Searches the Jentic catalog for APIs and workflows that match the provided natural language query. Results are semantically ranked based on relevance. Returns operation identifiers prefixed `op_` (single OpenAPI operations) or `wf_` (Arazzo workflows) that can be passed to the load and execute endpoints. Supports limiting the number of results returned."
+              },
+              "response": [
+                {
+                  "id": "0578aab5-d90c-4fd7-b51d-33eee8b11689",
+                  "name": "Search results returned successfully",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"query\": \"<string>\",\n  \"limit\": 5\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/agents/search",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "agents",
+                        "search"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"results\": [\n    {\n      \"uuid\": \"op_Q]vt(P!v+~M\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"api_name\": \"<string>\",\n      \"type\": \"workflow\",\n      \"score\": \"<float>\"\n    },\n    {\n      \"uuid\": \"wf_v2#NTp(~mb(\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"api_name\": \"<string>\",\n      \"type\": \"operation\",\n      \"score\": \"<float>\"\n    }\n  ]\n}",
+                  "createdAt": "2026-07-28T01:59:42.000Z",
+                  "updatedAt": "2026-07-28T01:59:42.000Z",
+                  "uid": "35240-0578aab5-d90c-4fd7-b51d-33eee8b11689"
+                },
+                {
+                  "id": "b0247cb9-02b2-44b8-a8b7-5a857ce2297a",
+                  "name": "Bad Request",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"query\": \"<string>\",\n  \"limit\": 5\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/agents/search",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "agents",
+                        "search"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"details\": {\n    \"reprehenderit3\": 70430969,\n    \"voluptate_a\": \"Ut cupidatat consectetur\"\n  }\n}",
+                  "createdAt": "2026-07-28T01:59:42.000Z",
+                  "updatedAt": "2026-07-28T01:59:42.000Z",
+                  "uid": "35240-b0247cb9-02b2-44b8-a8b7-5a857ce2297a"
+                },
+                {
+                  "id": "8364360d-09d2-4d1c-8b46-542832e55db8",
+                  "name": "Unauthorized \u2014 invalid or missing API key",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"query\": \"<string>\",\n  \"limit\": 5\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/agents/search",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "agents",
+                        "search"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"details\": {\n    \"reprehenderit3\": 70430969,\n    \"voluptate_a\": \"Ut cupidatat consectetur\"\n  }\n}",
+                  "createdAt": "2026-07-28T01:59:42.000Z",
+                  "updatedAt": "2026-07-28T01:59:42.000Z",
+                  "uid": "35240-8364360d-09d2-4d1c-8b46-542832e55db8"
+                },
+                {
+                  "id": "a8ed6111-10f2-4ae6-9f2f-3eb47b0e4dd8",
+                  "name": "Rate Limit Exceeded",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"query\": \"<string>\",\n  \"limit\": 5\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/agents/search",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "agents",
+                        "search"
+                      ]
+                    }
+                  },
+                  "status": "Too Many Requests",
+                  "code": 429,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"details\": {\n    \"reprehenderit3\": 70430969,\n    \"voluptate_a\": \"Ut cupidatat consectetur\"\n  }\n}",
+                  "createdAt": "2026-07-28T01:59:42.000Z",
+                  "updatedAt": "2026-07-28T01:59:42.000Z",
+                  "uid": "35240-a8ed6111-10f2-4ae6-9f2f-3eb47b0e4dd8"
+                }
+              ],
+              "createdAt": "2026-07-28T01:59:42.000Z",
+              "updatedAt": "2026-07-28T01:59:42.000Z",
+              "uid": "35240-d3ddd3f1-608e-48ca-b52f-2a9fa5745381"
+            }
+          ],
+          "id": "af9e39a1-39e4-410b-bab0-53140fa933f9",
+          "createdAt": "2026-07-28T01:59:42.000Z",
+          "updatedAt": "2026-07-28T01:59:42.000Z",
+          "uid": "35240-af9e39a1-39e4-410b-bab0-53140fa933f9"
+        }
+      ],
+      "id": "ea88dda8-5aa9-4954-8dbb-729a8b2c3287",
+      "createdAt": "2026-07-28T01:59:42.000Z",
+      "updatedAt": "2026-07-28T01:59:42.000Z",
+      "uid": "35240-ea88dda8-5aa9-4954-8dbb-729a8b2c3287"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-JENTIC-API-KEY",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.jentic.com/api/v1"
+    }
+  ]
+}

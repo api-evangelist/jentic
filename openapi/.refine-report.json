@@ -1,0 +1,18 @@
+{
+  "provider": "jentic",
+  "sources": [
+    "jentic-authentication-api-openapi.yml",
+    "jentic-execution-api-openapi.yml",
+    "jentic-search-api-openapi.yml"
+  ],
+  "outputs": [
+    "jentic-authentication-api-openapi.yml",
+    "jentic-execution-api-openapi.yml",
+    "jentic-search-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

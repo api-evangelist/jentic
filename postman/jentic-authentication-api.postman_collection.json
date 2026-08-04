@@ -1,0 +1,275 @@
+{
+  "info": {
+    "_postman_id": "ba663906-e852-48e0-a067-c7dd712e75e6",
+    "name": "Jentic Authentication API",
+    "description": "The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search \u2192 load \u2192 execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.\n\nContact Support:\n Name: Jentic Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:59:39.000Z",
+    "updatedAt": "2026-07-28T01:59:39.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-ba663906-e852-48e0-a067-c7dd712e75e6"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "item": [
+            {
+              "name": "Register A New Jentic Account",
+              "id": "6c521906-1ee5-44c2-b1ce-829c9efb4d7f",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"<email>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "description": "Registers a new account with the Jentic platform and returns an API key. An optional email address can be provided to receive higher rate limits. The returned API key must be stored securely and used in subsequent requests via the `X-JENTIC-API-KEY` header."
+              },
+              "response": [
+                {
+                  "id": "7a7db9ea-b573-4d34-9bd5-e6c7acd9b8d0",
+                  "name": "Successfully registered",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"email\": \"<email>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"api_key\": \"<string>\",\n  \"uuid\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:59:39.000Z",
+                  "updatedAt": "2026-07-28T01:59:39.000Z",
+                  "uid": "35240-7a7db9ea-b573-4d34-9bd5-e6c7acd9b8d0"
+                },
+                {
+                  "id": "e7dffed4-b36c-46b3-8757-e65103e245f7",
+                  "name": "Bad Request",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"email\": \"<email>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"details\": {\n    \"deserunt0a6\": false,\n    \"magnae\": -69491501,\n    \"ipsum_031\": true,\n    \"consectetur__38\": true\n  }\n}",
+                  "createdAt": "2026-07-28T01:59:39.000Z",
+                  "updatedAt": "2026-07-28T01:59:39.000Z",
+                  "uid": "35240-e7dffed4-b36c-46b3-8757-e65103e245f7"
+                },
+                {
+                  "id": "482ee14f-3260-49dd-b534-150e52583cfa",
+                  "name": "Rate Limit Exceeded",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "X-JENTIC-API-KEY",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"email\": \"<email>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "status": "Too Many Requests",
+                  "code": 429,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"error\": \"<string>\",\n  \"code\": \"<string>\",\n  \"details\": {\n    \"deserunt0a6\": false,\n    \"magnae\": -69491501,\n    \"ipsum_031\": true,\n    \"consectetur__38\": true\n  }\n}",
+                  "createdAt": "2026-07-28T01:59:39.000Z",
+                  "updatedAt": "2026-07-28T01:59:39.000Z",
+                  "uid": "35240-482ee14f-3260-49dd-b534-150e52583cfa"
+                }
+              ],
+              "createdAt": "2026-07-28T01:59:39.000Z",
+              "updatedAt": "2026-07-28T01:59:39.000Z",
+              "uid": "35240-6c521906-1ee5-44c2-b1ce-829c9efb4d7f"
+            }
+          ],
+          "id": "785b2acc-6d8e-4d93-8461-637b964ec7b8",
+          "createdAt": "2026-07-28T01:59:39.000Z",
+          "updatedAt": "2026-07-28T01:59:39.000Z",
+          "uid": "35240-785b2acc-6d8e-4d93-8461-637b964ec7b8"
+        }
+      ],
+      "id": "74b3198b-888c-4121-bfb8-ae95119ed13d",
+      "createdAt": "2026-07-28T01:59:39.000Z",
+      "updatedAt": "2026-07-28T01:59:39.000Z",
+      "uid": "35240-74b3198b-888c-4121-bfb8-ae95119ed13d"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-JENTIC-API-KEY",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.jentic.com/api/v1"
+    }
+  ]
+}
