@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Jentic Authentication API",
+    "version": "1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-JENTIC-API-KEY",
+      "value": "{{X-JENTIC-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Register A New Jentic Account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/auth/register",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Registers a new account with the Jentic platform and returns an API key. An optional email address can be provided to receive higher rate limits. The returned API key must be stored securely and used in subsequent requests via the `X-JENTIC-API-KEY` header."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

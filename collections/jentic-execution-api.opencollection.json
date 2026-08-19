@@ -1,0 +1,56 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Jentic Authentication Execution API",
+    "version": "1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-JENTIC-API-KEY",
+      "value": "{{X-JENTIC-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Execution",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Load Execution Information For Operations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/agents/load",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieves the full execution specification for one or more API operations or Arazzo workflows from the Jentic catalog. Returns HTTP method, path, input JSON Schema, authentication requirements, and other metadata needed to call the operation. Use the UUIDs returned from the search endpoint."
+        },
+        {
+          "info": {
+            "name": "Execute An API Operation Or Workflow",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.jentic.com/api/v1/agents/execute",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Executes a specific API operation or Arazzo workflow through the Jentic platform. Credentials for the upstream API are injected server-side by Jentic and are never sent to or stored by the agent. The operation or workflow is identified by its UUID, and the required inputs must match the JSON Schema returned by the load endpoint. Supports both single OpenAPI operations (`execution_type: operation`) and multi-step Arazzo workflows (`execution_type: workflow`)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

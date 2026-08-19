@@ -1,0 +1,667 @@
+{
+  "item": [
+    {
+      "id": "a4dff147-1895-4ede-abc0-171dc1b520e5",
+      "name": "Execution",
+      "description": {
+        "content": "Load execution details and execute API operations or Arazzo workflows with managed authentication and credential injection.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "edb9fb94-670b-402e-a628-6b50ee793f79",
+          "name": "Load Execution Information For Operations",
+          "request": {
+            "name": "Load Execution Information For Operations",
+            "description": {
+              "content": "Retrieves the full execution specification for one or more API operations or Arazzo workflows from the Jentic catalog. Returns HTTP method, path, input JSON Schema, authentication requirements, and other metadata needed to call the operation. Use the UUIDs returned from the search endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                "load"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "686a263b-b5dd-49bd-bd46-7e02373c0177",
+              "name": "Execution information loaded successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "load"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n    \"wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"tool_info\": {\n    \"key_0\": {\n      \"name\": \"string\",\n      \"description\": \"string\",\n      \"method\": \"GET\",\n      \"path\": \"string\",\n      \"inputs\": {\n        \"key_0\": 2062,\n        \"key_1\": 8891.793765110915\n      },\n      \"auth_required\": true\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d57454c2-dca2-4eb4-a51e-5bdcbf121c28",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "load"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n    \"wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "18fe7f7c-371b-4f34-969f-d22a29a9c9fa",
+              "name": "Unauthorized — invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "load"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n    \"wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c380e93f-0834-44b3-924e-46807536a398",
+              "name": "Operation Or Workflow Not Found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "load"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ids\": [\n    \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n    \"wf_22b8d9e1c8014a2f9c1e3b7a8d4e5f60\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cafb9870-1df9-4e91-b8f3-f1a8afdcfd20",
+          "name": "Execute An API Operation Or Workflow",
+          "request": {
+            "name": "Execute An API Operation Or Workflow",
+            "description": {
+              "content": "Executes a specific API operation or Arazzo workflow through the Jentic platform. Credentials for the upstream API are injected server-side by Jentic and are never sent to or stored by the agent. The operation or workflow is identified by its UUID, and the required inputs must match the JSON Schema returned by the load endpoint. Supports both single OpenAPI operations (`execution_type: operation`) and multi-step Arazzo workflows (`execution_type: workflow`).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                "execute"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"execution_type\": \"<string>\",\n  \"uuid\": \"<string>\",\n  \"inputs\": {\n    \"key_0\": 7654.744591074852\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "60b21a6d-9701-480a-b269-3a2590695e1a",
+              "name": "Operation executed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"output\": {},\n  \"status\": \"success\",\n  \"execution_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bf03bcaf-ab35-4934-b2c4-6fc72aab20e2",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "28821aaf-fda2-4379-b9e1-ee0ee871c461",
+              "name": "Unauthorized — invalid or missing API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "55566265-aecd-413d-93cf-ea04a7418e42",
+              "name": "Operation Or Workflow Not Found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e48538be-e913-4e34-ade9-024e52cff97a",
+              "name": "Unprocessable Entity — missing or invalid inputs",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f86d0710-6c09-4105-89e1-36fdadba4d3e",
+              "name": "Upstream API Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-JENTIC-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"execution_type\": \"operation\",\n  \"uuid\": \"op_d3a91c6f0b1c4a6c8e2f7b5d9c1a2b3c\",\n  \"inputs\": {\n    \"to\": \"friend@example.com\",\n    \"subject\": \"Hello from Jentic\",\n    \"body\": \"This was sent by an agent.\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"code\": \"string\",\n  \"details\": {\n    \"key_0\": 6961.845436991526,\n    \"key_1\": 6439.058246109112\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.jentic.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-JENTIC-API-KEY"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "6e6cfb40-b9d9-4fa3-94c3-dfd028a2f677",
+    "name": "Jentic Authentication Execution API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.\n\nContact Support:\n Name: Jentic Support",
+      "type": "text/plain"
+    }
+  }
+}
