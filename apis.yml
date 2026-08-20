@@ -36,6 +36,20 @@ tags:
   - OpenAPI
   - MCP
   - Workflows
+  - Integration
+  - Agent Runtime
+  - Standard Agent
+  - Just In Time Tooling
+  - Credential Vault
+  - Agent Governance
+  - Observability
+  - API AI Readiness
+tags_raw:
+  - AI Agents
+  - Arazzo
+  - OpenAPI
+  - MCP
+  - Workflows
   - Integrations
   - Agent Runtime
   - Standard Agent
@@ -62,6 +76,11 @@ apis:
     same search / load / execute pattern as the Jentic API, but packaged as MCP tools. Supports OAuth
     2.0 with PKCE and dynamic client registration, with an API key fallback for Cursor and Windsurf.
   tags:
+  - MCP
+  - AI Agents
+  - Authentication
+  - Remote MCP
+  tags_raw:
   - MCP
   - AI Agents
   - OAuth
@@ -105,6 +124,11 @@ apis:
   - Arazzo
   - OpenAPI
   - Workflows
+  - Open-Source
+  tags_raw:
+  - Arazzo
+  - OpenAPI
+  - Workflows
   - Open Source
   properties:
   - url: https://github.com/jentic/arazzo-engine
@@ -124,6 +148,11 @@ apis:
   tags:
   - Agent Framework
   - ReWOO
+  - Open-Source
+  - Python
+  tags_raw:
+  - Agent Framework
+  - ReWOO
   - Open Source
   - Python
   properties:
@@ -140,6 +169,10 @@ apis:
     credentials at runtime, and brokering the request. Intended for teams that want Jentic's execution
     model without sending traffic through the hosted Jentic API.
   tags:
+  - Self-Hosted
+  - Open-Source
+  - Agent Runtime
+  tags_raw:
   - Self Hosted
   - Open Source
   - Agent Runtime
@@ -154,6 +187,10 @@ apis:
     AI systems and autonomous agents. Defines the signals, dimensions, scoring model, and normalization
     rules used by the Jentic API Scorecard product. Apache 2.0.
   tags:
+  - Specification
+  - API AI Readiness
+  - Open-Source
+  tags_raw:
   - Specification
   - API AI Readiness
   - Open Source
