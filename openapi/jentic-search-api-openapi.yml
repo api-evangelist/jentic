@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Jentic Authentication Search API
+  title: Jentic Search API
   description: The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.
   version: '1'
   contact:
@@ -58,6 +58,46 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
+    SearchResponse:
+      type: object
+      description: Response containing semantically ranked search results from the Jentic catalog.
+      properties:
+        results:
+          type: array
+          description: List of matching API operations and workflows, ranked by semantic relevance.
+          items:
+            $ref: '#/components/schemas/SearchResult'
+    SearchRequest:
+      type: object
+      description: Request body for searching the Jentic API catalog using a natural language query.
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          description: Natural language query describing the desired capability (e.g. "send an email", "find a restaurant in Dublin", "create a Linear issue").
+        limit:
+          type: integer
+          minimum: 1
+          default: 5
+          description: Maximum number of search results to return.
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details when available.
     SearchResult:
       type: object
       description: A single search result representing an API operation or workflow.
@@ -85,49 +125,9 @@ components:
           type: number
           format: float
           description: Semantic relevance score indicating how well this result matches the search query.
-    SearchResponse:
-      type: object
-      description: Response containing semantically ranked search results from the Jentic catalog.
-      properties:
-        results:
-          type: array
-          description: List of matching API operations and workflows, ranked by semantic relevance.
-          items:
-            $ref: '#/components/schemas/SearchResult'
-    ErrorResponse:
-      type: object
-      description: Standard error response returned when a request fails.
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: Human-readable error message describing what went wrong.
-        code:
-          type: string
-          description: Machine-readable error code for programmatic handling.
-        details:
-          type: object
-          additionalProperties: true
-          description: Additional error details when available.
-    SearchRequest:
-      type: object
-      description: Request body for searching the Jentic API catalog using a natural language query.
-      required:
-      - query
-      properties:
-        query:
-          type: string
-          minLength: 1
-          description: Natural language query describing the desired capability (e.g. "send an email", "find a restaurant in Dublin", "create a Linear issue").
-        limit:
-          type: integer
-          minimum: 1
-          default: 5
-          description: Maximum number of search results to return.
   responses:
-    Unauthorized:
-      description: Unauthorized — invalid or missing API key
+    TooManyRequests:
+      description: Rate Limit Exceeded
       content:
         application/json:
           schema:
@@ -138,8 +138,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate Limit Exceeded
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
       content:
         application/json:
           schema:

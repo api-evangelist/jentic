@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: Jentic Authentication API
   description: The Jentic API is the hosted agent control plane that lets any AI agent dynamically discover, load, and execute API operations and Arazzo workflows from the Jentic catalog. The canonical flow is search → load → execute. Operation UUIDs are prefixed `op_` and workflow UUIDs are prefixed `wf_`. Authentication uses an agent-scoped API key (`X-JENTIC-API-KEY`). Credentials for upstream APIs are injected server-side at execution time and are never exposed to the agent.
@@ -94,14 +94,14 @@ components:
           additionalProperties: true
           description: Additional error details when available.
   responses:
-    BadRequest:
-      description: Bad Request
+    TooManyRequests:
+      description: Rate Limit Exceeded
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate Limit Exceeded
+    BadRequest:
+      description: Bad Request
       content:
         application/json:
           schema:
