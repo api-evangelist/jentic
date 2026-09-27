@@ -12,17 +12,23 @@ description: >-
   execution layer, a hosted Remote MCP server at api.jentic.com/mcp, and the Jentic API AI-Readiness Framework (JAIRF)
   for scoring API readiness for agents.
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - jentic/api-ai-readiness-framework
+    - jentic/arazzo-engine
+    - jentic/jentic-mini
+    - jentic/standard-agent
   open_source: unknown
   commercial: true
   callable_host: true
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: enterprise
@@ -138,12 +144,13 @@ apis:
   - Arazzo
   - OpenAPI
   - Workflows
-  - Open-Source
+  - Open Source
   tags_raw:
   - Arazzo
   - OpenAPI
   - Workflows
   - Open Source
+  - Open-Source
   properties:
   - url: https://github.com/jentic/arazzo-engine
     type: SourceCode
@@ -162,13 +169,14 @@ apis:
   tags:
   - Agent Framework
   - ReWOO
-  - Open-Source
+  - Open Source
   - Python
   tags_raw:
   - Agent Framework
   - ReWOO
   - Open Source
   - Python
+  - Open-Source
   properties:
   - url: https://github.com/jentic/standard-agent
     type: SourceCode
@@ -184,12 +192,13 @@ apis:
     model without sending traffic through the hosted Jentic API.
   tags:
   - Self-Hosted
-  - Open-Source
+  - Open Source
   - Agent Runtime
   tags_raw:
   - Self Hosted
   - Open Source
   - Agent Runtime
+  - Open-Source
   properties:
   - url: https://github.com/jentic/jentic-mini
     type: SourceCode
@@ -203,11 +212,12 @@ apis:
   tags:
   - Specification
   - API AI Readiness
-  - Open-Source
+  - Open Source
   tags_raw:
   - Specification
   - API AI Readiness
   - Open Source
+  - Open-Source
   properties:
   - url: https://github.com/jentic/api-ai-readiness-framework
     type: SourceCode

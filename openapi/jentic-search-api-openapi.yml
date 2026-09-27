@@ -58,15 +58,6 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   schemas:
-    SearchResponse:
-      type: object
-      description: Response containing semantically ranked search results from the Jentic catalog.
-      properties:
-        results:
-          type: array
-          description: List of matching API operations and workflows, ranked by semantic relevance.
-          items:
-            $ref: '#/components/schemas/SearchResult'
     SearchRequest:
       type: object
       description: Request body for searching the Jentic API catalog using a natural language query.
@@ -125,15 +116,24 @@ components:
           type: number
           format: float
           description: Semantic relevance score indicating how well this result matches the search query.
+    SearchResponse:
+      type: object
+      description: Response containing semantically ranked search results from the Jentic catalog.
+      properties:
+        results:
+          type: array
+          description: List of matching API operations and workflows, ranked by semantic relevance.
+          items:
+            $ref: '#/components/schemas/SearchResult'
   responses:
-    TooManyRequests:
-      description: Rate Limit Exceeded
+    BadRequest:
+      description: Bad Request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    BadRequest:
-      description: Bad Request
+    TooManyRequests:
+      description: Rate Limit Exceeded
       content:
         application/json:
           schema:

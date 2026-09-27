@@ -107,6 +107,77 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ExecutionResponse:
+      type: object
+      description: Response containing the results of executing an API operation or workflow.
+      properties:
+        output:
+          description: The output data returned by the executed operation or workflow. Structure varies depending on the upstream API.
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: The execution status.
+        execution_id:
+          type: string
+          description: Unique identifier for this execution, useful for debugging and observability.
+    LoadResponse:
+      type: object
+      description: Response containing detailed execution information keyed by UUID.
+      properties:
+        tool_info:
+          type: object
+          description: Map of operation UUIDs to their detailed execution information including input JSON Schema, HTTP method, path, and authentication requirements.
+          additionalProperties:
+            $ref: '#/components/schemas/ToolInfo'
+    ExecutionRequest:
+      type: object
+      description: Request body for executing an API operation or Arazzo workflow through the Jentic platform.
+      required:
+      - execution_type
+      - uuid
+      properties:
+        execution_type:
+          type: string
+          enum:
+          - operation
+          - workflow
+          description: Whether to execute a single OpenAPI operation or a multi-step Arazzo workflow.
+        uuid:
+          type: string
+          pattern: ^(op_|wf_).+
+          description: The unique identifier of the operation or workflow to execute, as returned by `/agents/search`.
+        inputs:
+          type: object
+          additionalProperties: true
+          description: Input parameters for the operation, matching the JSON Schema returned by `/agents/load`.
+    ToolInfo:
+      type: object
+      description: Detailed execution information for a single operation or workflow.
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        path:
+          type: string
+          description: URL path template for the upstream API operation.
+        inputs:
+          type: object
+          additionalProperties: true
+          description: JSON Schema describing the required and optional input parameters for the operation.
+        auth_required:
+          type: boolean
+          description: Whether this operation requires upstream API credentials to be configured in the Jentic credential vault.
     ErrorResponse:
       type: object
       description: Standard error response returned when a request fails.
@@ -135,77 +206,6 @@ components:
           description: List of operation or workflow UUIDs (from `/agents/search`) to load execution information for.
           items:
             type: string
-    ToolInfo:
-      type: object
-      description: Detailed execution information for a single operation or workflow.
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        method:
-          type: string
-          enum:
-          - GET
-          - POST
-          - PUT
-          - PATCH
-          - DELETE
-        path:
-          type: string
-          description: URL path template for the upstream API operation.
-        inputs:
-          type: object
-          additionalProperties: true
-          description: JSON Schema describing the required and optional input parameters for the operation.
-        auth_required:
-          type: boolean
-          description: Whether this operation requires upstream API credentials to be configured in the Jentic credential vault.
-    ExecutionResponse:
-      type: object
-      description: Response containing the results of executing an API operation or workflow.
-      properties:
-        output:
-          description: The output data returned by the executed operation or workflow. Structure varies depending on the upstream API.
-        status:
-          type: string
-          enum:
-          - success
-          - error
-          description: The execution status.
-        execution_id:
-          type: string
-          description: Unique identifier for this execution, useful for debugging and observability.
-    ExecutionRequest:
-      type: object
-      description: Request body for executing an API operation or Arazzo workflow through the Jentic platform.
-      required:
-      - execution_type
-      - uuid
-      properties:
-        execution_type:
-          type: string
-          enum:
-          - operation
-          - workflow
-          description: Whether to execute a single OpenAPI operation or a multi-step Arazzo workflow.
-        uuid:
-          type: string
-          pattern: ^(op_|wf_).+
-          description: The unique identifier of the operation or workflow to execute, as returned by `/agents/search`.
-        inputs:
-          type: object
-          additionalProperties: true
-          description: Input parameters for the operation, matching the JSON Schema returned by `/agents/load`.
-    LoadResponse:
-      type: object
-      description: Response containing detailed execution information keyed by UUID.
-      properties:
-        tool_info:
-          type: object
-          description: Map of operation UUIDs to their detailed execution information including input JSON Schema, HTTP method, path, and authentication requirements.
-          additionalProperties:
-            $ref: '#/components/schemas/ToolInfo'
   responses:
     NotFound:
       description: Operation Or Workflow Not Found
