@@ -16,12 +16,22 @@ deployment:
 tools_count: 4
 tools:
 - name: list_credentials
-  description: ''
+  description: Use this tool to list all API credentials the authenticated agent has access to. Use this
+    if a user asks "What APIs can I use?", "What credentials do I have access to?", "What apps are available
+    to me?", "What APIs are available to me?" Thi
 - name: search_apis
-  description: ''
+  description: Use this tool to explore for available actions or information based on what the user wants
+    to do (e.g., 'find Discord servers', 'send a message'). Use this to discover what APIs and operations
+    exist in the Jentic catalogue.  Execution is mo
 - name: load_execution_info
-  description: ''
+  description: 'Use this tool to get the full execution contract for a specific operation (its inputs,
+    outputs, and authentication requirements). This tool must use the operation UUIDs returned from the
+    search_apis tool.  DEPRECATION NOTICE: This tool is b'
 - name: execute
-  description: ''
+  description: Use this tool to execute the chosen action for the user using the provided details. Always
+    include `inputs` even if there are none. To reduce context, use `include_paths` to return only the
+    fields you need from the output.  DEPRECATION NOTI
 tools_source: live tools/list via initialize handshake, 2026-09-11 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
+descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
+  --descriptions, 2026-09-28
