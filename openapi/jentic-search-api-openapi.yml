@@ -57,7 +57,62 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
+  responses:
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
+    SearchResponse:
+      type: object
+      description: Response containing semantically ranked search results from the Jentic catalog.
+      properties:
+        results:
+          type: array
+          description: List of matching API operations and workflows, ranked by semantic relevance.
+          items:
+            $ref: '#/components/schemas/SearchResult'
+    SearchResult:
+      type: object
+      description: A single search result representing an API operation or workflow.
+      properties:
+        uuid:
+          type: string
+          pattern: ^(op_|wf_).+
+          description: Unique identifier for the operation, prefixed `op_` for single OpenAPI operations or `wf_` for Arazzo workflows.
+        name:
+          type: string
+          description: Human-readable name of the operation or workflow.
+        description:
+          type: string
+          description: Detailed description of what the operation does.
+        api_name:
+          type: string
+          description: Name of the upstream API that provides this operation.
+        type:
+          type: string
+          enum:
+          - operation
+          - workflow
+          description: Whether this result is an individual OpenAPI operation or a multi-step Arazzo workflow.
+        score:
+          type: number
+          format: float
+          description: Semantic relevance score indicating how well this result matches the search query.
     SearchRequest:
       type: object
       description: Request body for searching the Jentic API catalog using a natural language query.
@@ -89,61 +144,6 @@ components:
           type: object
           additionalProperties: true
           description: Additional error details when available.
-    SearchResult:
-      type: object
-      description: A single search result representing an API operation or workflow.
-      properties:
-        uuid:
-          type: string
-          pattern: ^(op_|wf_).+
-          description: Unique identifier for the operation, prefixed `op_` for single OpenAPI operations or `wf_` for Arazzo workflows.
-        name:
-          type: string
-          description: Human-readable name of the operation or workflow.
-        description:
-          type: string
-          description: Detailed description of what the operation does.
-        api_name:
-          type: string
-          description: Name of the upstream API that provides this operation.
-        type:
-          type: string
-          enum:
-          - operation
-          - workflow
-          description: Whether this result is an individual OpenAPI operation or a multi-step Arazzo workflow.
-        score:
-          type: number
-          format: float
-          description: Semantic relevance score indicating how well this result matches the search query.
-    SearchResponse:
-      type: object
-      description: Response containing semantically ranked search results from the Jentic catalog.
-      properties:
-        results:
-          type: array
-          description: List of matching API operations and workflows, ranked by semantic relevance.
-          items:
-            $ref: '#/components/schemas/SearchResult'
-  responses:
-    BadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate Limit Exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Unauthorized — invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     apiKeyAuth:
       type: apiKey
