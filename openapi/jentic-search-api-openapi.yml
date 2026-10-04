@@ -58,12 +58,6 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
 components:
   responses:
-    Unauthorized:
-      description: Unauthorized — invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -72,6 +66,12 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
     TooManyRequests:
       description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
       content:
         application/json:
           schema:
@@ -86,6 +86,22 @@ components:
           description: List of matching API operations and workflows, ranked by semantic relevance.
           items:
             $ref: '#/components/schemas/SearchResult'
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details when available.
     SearchResult:
       type: object
       description: A single search result representing an API operation or workflow.
@@ -128,22 +144,6 @@ components:
           minimum: 1
           default: 5
           description: Maximum number of search results to return.
-    ErrorResponse:
-      type: object
-      description: Standard error response returned when a request fails.
-      required:
-      - error
-      properties:
-        error:
-          type: string
-          description: Human-readable error message describing what went wrong.
-        code:
-          type: string
-          description: Machine-readable error code for programmatic handling.
-        details:
-          type: object
-          additionalProperties: true
-          description: Additional error details when available.
   securitySchemes:
     apiKeyAuth:
       type: apiKey

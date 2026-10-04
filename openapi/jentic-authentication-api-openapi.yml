@@ -56,19 +56,20 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
-    RegisterResponse:
-      type: object
-      description: Response containing the newly generated API key and account details.
-      required:
-      - api_key
-      properties:
-        api_key:
-          type: string
-          description: The generated API key to use in subsequent requests via the `X-JENTIC-API-KEY` header.
-        uuid:
-          type: string
-          description: The unique identifier for the registered account.
     RegisterRequest:
       type: object
       description: Request body for registering a new Jentic account.
@@ -93,19 +94,18 @@ components:
           type: object
           additionalProperties: true
           description: Additional error details when available.
-  responses:
-    BadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate Limit Exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+    RegisterResponse:
+      type: object
+      description: Response containing the newly generated API key and account details.
+      required:
+      - api_key
+      properties:
+        api_key:
+          type: string
+          description: The generated API key to use in subsequent requests via the `X-JENTIC-API-KEY` header.
+        uuid:
+          type: string
+          description: The unique identifier for the registered account.
   securitySchemes:
     apiKeyAuth:
       type: apiKey

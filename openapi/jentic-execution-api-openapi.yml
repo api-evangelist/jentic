@@ -107,12 +107,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   responses:
-    Unauthorized:
-      description: Unauthorized — invalid or missing API key
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     BadRequest:
       description: Bad Request
       content:
@@ -125,34 +119,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized — invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
-    LoadRequest:
-      type: object
-      description: Request body for loading detailed execution information for one or more operations.
-      required:
-      - ids
-      properties:
-        ids:
-          type: array
-          minItems: 1
-          description: List of operation or workflow UUIDs (from `/agents/search`) to load execution information for.
-          items:
-            type: string
-    ExecutionResponse:
-      type: object
-      description: Response containing the results of executing an API operation or workflow.
-      properties:
-        output:
-          description: The output data returned by the executed operation or workflow. Structure varies depending on the upstream API.
-        status:
-          type: string
-          enum:
-          - success
-          - error
-          description: The execution status.
-        execution_id:
-          type: string
-          description: Unique identifier for this execution, useful for debugging and observability.
     ToolInfo:
       type: object
       description: Detailed execution information for a single operation or workflow.
@@ -179,15 +152,49 @@ components:
         auth_required:
           type: boolean
           description: Whether this operation requires upstream API credentials to be configured in the Jentic credential vault.
-    LoadResponse:
+    ExecutionResponse:
       type: object
-      description: Response containing detailed execution information keyed by UUID.
+      description: Response containing the results of executing an API operation or workflow.
       properties:
-        tool_info:
+        output:
+          description: The output data returned by the executed operation or workflow. Structure varies depending on the upstream API.
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: The execution status.
+        execution_id:
+          type: string
+          description: Unique identifier for this execution, useful for debugging and observability.
+    ErrorResponse:
+      type: object
+      description: Standard error response returned when a request fails.
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message describing what went wrong.
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling.
+        details:
           type: object
-          description: Map of operation UUIDs to their detailed execution information including input JSON Schema, HTTP method, path, and authentication requirements.
-          additionalProperties:
-            $ref: '#/components/schemas/ToolInfo'
+          additionalProperties: true
+          description: Additional error details when available.
+    LoadRequest:
+      type: object
+      description: Request body for loading detailed execution information for one or more operations.
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          minItems: 1
+          description: List of operation or workflow UUIDs (from `/agents/search`) to load execution information for.
+          items:
+            type: string
     ExecutionRequest:
       type: object
       description: Request body for executing an API operation or Arazzo workflow through the Jentic platform.
@@ -209,22 +216,15 @@ components:
           type: object
           additionalProperties: true
           description: Input parameters for the operation, matching the JSON Schema returned by `/agents/load`.
-    ErrorResponse:
+    LoadResponse:
       type: object
-      description: Standard error response returned when a request fails.
-      required:
-      - error
+      description: Response containing detailed execution information keyed by UUID.
       properties:
-        error:
-          type: string
-          description: Human-readable error message describing what went wrong.
-        code:
-          type: string
-          description: Machine-readable error code for programmatic handling.
-        details:
+        tool_info:
           type: object
-          additionalProperties: true
-          description: Additional error details when available.
+          description: Map of operation UUIDs to their detailed execution information including input JSON Schema, HTTP method, path, and authentication requirements.
+          additionalProperties:
+            $ref: '#/components/schemas/ToolInfo'
   securitySchemes:
     apiKeyAuth:
       type: apiKey
