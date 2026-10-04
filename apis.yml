@@ -50,6 +50,9 @@ access: 3rd-Party
 position: Consuming
 created: '2026-01-02'
 modified: '2026-05-19'
+x-docs-platform: mkdocs
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-10-03
 tags:
   - AI Agents
   - Arazzo
