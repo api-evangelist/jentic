@@ -14,7 +14,7 @@ edges:
     registered_name: io.github.jentic/mcp-server
     register_id: io.github.jentic/mcp-server
     detected_by: sweep-agent-tools.py
-    detected: '2026-10-14'
+    detected: '2026-10-15'
   mcp_registry:
     servers:
     - io.github.jentic/mcp-server
