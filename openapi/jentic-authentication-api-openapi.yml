@@ -56,28 +56,7 @@ paths:
         '429':
           $ref: '#/components/responses/TooManyRequests'
 components:
-  responses:
-    BadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    TooManyRequests:
-      description: Rate Limit Exceeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
   schemas:
-    RegisterRequest:
-      type: object
-      description: Request body for registering a new Jentic account.
-      properties:
-        email:
-          type: string
-          format: email
-          description: Optional email address for the account. Providing an email grants higher rate limits.
     ErrorResponse:
       type: object
       description: Standard error response returned when a request fails.
@@ -94,6 +73,14 @@ components:
           type: object
           additionalProperties: true
           description: Additional error details when available.
+    RegisterRequest:
+      type: object
+      description: Request body for registering a new Jentic account.
+      properties:
+        email:
+          type: string
+          format: email
+          description: Optional email address for the account. Providing an email grants higher rate limits.
     RegisterResponse:
       type: object
       description: Response containing the newly generated API key and account details.
@@ -106,6 +93,19 @@ components:
         uuid:
           type: string
           description: The unique identifier for the registered account.
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Rate Limit Exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     apiKeyAuth:
       type: apiKey
