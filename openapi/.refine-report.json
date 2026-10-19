@@ -1,24 +1,49 @@
 {
   "provider": "jentic",
   "sources": [
-    "_original/jentic-openapi.yml"
+    "_original/jentic-openapi.json"
   ],
   "outputs": [
-    "jentic-authentication-api-openapi.yml",
-    "jentic-execution-api-openapi.yml",
-    "jentic-search-api-openapi.yml"
+    "jentic-api-operations-api-openapi.yml",
+    "jentic-api-spec-api-openapi.yml",
+    "jentic-apis-api-openapi.yml",
+    "jentic-access-requests-api-openapi.yml",
+    "jentic-actors-api-openapi.yml",
+    "jentic-agent-registration-api-openapi.yml",
+    "jentic-agents-api-openapi.yml",
+    "jentic-audit-api-openapi.yml",
+    "jentic-catalog-api-openapi.yml",
+    "jentic-configuration-api-openapi.yml",
+    "jentic-credentials-api-openapi.yml",
+    "jentic-discovery-api-openapi.yml",
+    "jentic-events-api-openapi.yml",
+    "jentic-executions-api-openapi.yml",
+    "jentic-identity-api-openapi.yml",
+    "jentic-inspect-api-openapi.yml",
+    "jentic-jobs-api-openapi.yml",
+    "jentic-mcp-api-openapi.yml",
+    "jentic-monitoring-api-openapi.yml",
+    "jentic-notes-api-openapi.yml",
+    "jentic-oauth-api-openapi.yml",
+    "jentic-oauth-clients-api-openapi.yml",
+    "jentic-overlays-api-openapi.yml",
+    "jentic-permissions-api-openapi.yml",
+    "jentic-search-api-openapi.yml",
+    "jentic-service-accounts-api-openapi.yml",
+    "jentic-system-api-openapi.yml",
+    "jentic-toolkit-credentials-api-openapi.yml",
+    "jentic-toolkit-keys-api-openapi.yml",
+    "jentic-toolkit-permissions-api-openapi.yml",
+    "jentic-toolkits-api-openapi.yml",
+    "jentic-users-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "jentic-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "jentic-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+31 apis, 37 total)"
   ],
-  "skipped": [
-    "jentic-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "jentic-execution-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "jentic-search-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

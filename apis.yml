@@ -224,92 +224,6 @@ apis:
   properties:
   - url: https://github.com/jentic/api-ai-readiness-framework
     type: SourceCode
-- aid: jentic:jentic-authentication-api
-  name: Jentic Authentication API
-  description: Registration and API key management for accessing the Jentic platform.
-  humanURL: https://docs.jentic.com/reference/public-apis/
-  baseURL: https://api.jentic.com/api/v1
-  tags:
-  - Authentication
-  properties:
-  - type: OpenAPI
-    url: openapi/jentic-authentication-api-openapi.yml
-  - type: Website
-    url: https://jentic.com/
-  - type: Documentation
-    url: https://docs.jentic.com/
-  - type: GettingStarted
-    url: https://docs.jentic.com/getting-started/quickstart/
-  - type: APIReference
-    url: https://docs.jentic.com/reference/public-apis/
-  - type: Signup
-    url: https://app.jentic.com/sign-up
-  - type: Console
-    url: https://app.jentic.com/
-  - type: BaseURL
-    url: https://api.jentic.com/api/v1
-  - type: SpectralRules
-    url: rules/jentic-rules.yml
-  - type: JSONSchema
-    url: json-schema/jentic-operation-schema.json
-  - type: JSONSchema
-    url: json-schema/jentic-agent-schema.json
-  - type: JSONSchema
-    url: json-schema/jentic-workflow-schema.json
-  - type: JSONStructure
-    url: json-structure/jentic-operation-structure.json
-  - type: Examples
-    url: examples/jentic-search-example.json
-  - type: Examples
-    url: examples/jentic-load-example.json
-  - type: Examples
-    url: examples/jentic-execute-example.json
-  - type: Examples
-    url: examples/jentic-register-example.json
-- aid: jentic:jentic-execution-api
-  name: Jentic Execution API
-  description: >-
-    Load execution details and execute API operations or Arazzo workflows with managed authentication
-    and credential injection.
-  humanURL: https://docs.jentic.com/reference/public-apis/
-  baseURL: https://api.jentic.com/api/v1
-  tags:
-  - Execution
-  properties:
-  - type: OpenAPI
-    url: openapi/jentic-execution-api-openapi.yml
-  - type: Website
-    url: https://jentic.com/
-  - type: Documentation
-    url: https://docs.jentic.com/
-  - type: GettingStarted
-    url: https://docs.jentic.com/getting-started/quickstart/
-  - type: APIReference
-    url: https://docs.jentic.com/reference/public-apis/
-  - type: Signup
-    url: https://app.jentic.com/sign-up
-  - type: Console
-    url: https://app.jentic.com/
-  - type: BaseURL
-    url: https://api.jentic.com/api/v1
-  - type: SpectralRules
-    url: rules/jentic-rules.yml
-  - type: JSONSchema
-    url: json-schema/jentic-operation-schema.json
-  - type: JSONSchema
-    url: json-schema/jentic-agent-schema.json
-  - type: JSONSchema
-    url: json-schema/jentic-workflow-schema.json
-  - type: JSONStructure
-    url: json-structure/jentic-operation-structure.json
-  - type: Examples
-    url: examples/jentic-search-example.json
-  - type: Examples
-    url: examples/jentic-load-example.json
-  - type: Examples
-    url: examples/jentic-execute-example.json
-  - type: Examples
-    url: examples/jentic-register-example.json
 - aid: jentic:jentic-search-api
   name: Jentic Search API
   description: Semantic search over the Jentic API and workflow catalog using natural language queries.
@@ -320,6 +234,1601 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/jentic-search-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-access-requests-api
+  name: Jentic Access Requests API
+  description: >-
+    Actor-agnostic, multi-item access-request surface (Core / Access bounded context). When an agent's
+    brokered call is rejected by a permission rule — or the agent needs access it doesn't yet have — the
+    agent files an `AccessRequest` containing one or more line items (`AccessRequestItem`). The request
+    enters `pending` state and surfaces an `approve_url` that the agent presents to a human reviewer.
+
+
+    Reviewers `:decide` individual items (approve or deny each); filers can `:amend` pending items (adjust
+    rules or target) or `:withdraw` the entire request. Each item transitions independently; the envelope
+    status reflects the aggregate (`pending` while any item is pending, `partially_approved` when some
+    items are decided but others remain, terminal once all items resolve).
+
+
+    Pending requests carry a TTL (default 7 days, configurable). Envelope lifecycle: `pending → partially_approved
+    → approved | denied | withdrawn | expired`.
+
+
+    **Identity scoping.** List and get operations are identity-scoped: filers see their own requests,
+    reviewers see their inbox, `org:admin` sees all. Non-owners receive `404` (not `403`) to avoid leaking
+    existence.
+
+
+    **Security.** Mutating operations (`POST`, `:decide`, `:amend`, `:withdraw`) require `agents:write`;
+    read operations require `agents:read`.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Access Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-access-requests-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-actors-api
+  name: Jentic Actors API
+  description: >-
+    Unified actor directory — a lightweight read-only view across all actor types (users, agents, service
+    accounts). Returns ID-to-name mappings for UI cache hydration so dashboards can display friendly names
+    wherever an `actor_id` appears.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Actors
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-actors-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-agent-registration-api
+  name: Jentic Agent Registration API
+  description: >-
+    Dynamic agent registration (RFC 7591-style) — register a new agent client, poll registration status,
+    update, or delete a registration.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Agent Registration
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-agent-registration-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-agents-api
+  name: Jentic Agents API
+  description: >-
+    Agent actors — autonomous principals that call the Broker. Covers the agent lifecycle (list, read,
+    approve / deny, enable / disable, archive) and the toolkits bound to each agent.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-agents-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-api-operations-api
+  name: Jentic API Operations API
+  description: >-
+    Sub-resource of **APIs** (Registry bounded context). Enumerate the operations exposed by a registered
+    API — either the live (`current_revision_id`) view or a specific revision. Complements `Search` (ranked
+    discovery) and `Inspect` (single-operation detail) by giving callers the deterministic list of every
+    registered operation under one API without ranking, paging through `Search`, or parsing the spec.
+
+
+    Each row is slim — the structural detail (parameters, response schema, security scheme) lives behind
+    `_links.inspect` for callers that need it.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - API Operations
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-api-operations-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-api-spec-api
+  name: Jentic API Spec API
+  description: >-
+    Sub-resource of **APIs** (Registry bounded context). Download the underlying OpenAPI document for
+    a registered API — either the live (`current_revision_id`) view or a specific revision. Supports `application/json`,
+    `application/openapi+yaml`, and `application/yaml` via `Accept`-header content negotiation, with `Content-Disposition:
+    attachment; filename="..."` so browser downloads work cleanly.
+
+
+    By default the response includes any deployment-local overlays merged on top of the imported base.
+    Pass `?overlays=false` to download the raw imported spec instead.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - API Spec
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-api-spec-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-apis-api
+  name: Jentic APIs API
+  description: >-
+    The `Api` aggregate root — what APIs are registered for this deployment, addressable by the loose
+    `(vendor, name, version)` tuple. Every successful import lands a new immutable `ApiRevision`; the
+    `Api` carries the live `current_revision_id` plus presentation metadata (`display_name`, `description`,
+    `icon_url`).
+
+
+    Mutation surfaces:
+
+
+    - `POST /apis` — async import (url / inline). Returns 202 + `Job (kind=import)`.
+
+    - `PATCH /apis/{vendor}/{name}/{version}` — metadata-only updates (display name, description, icon).
+    Cannot mutate revisions or spec content.
+
+    - `POST /apis/{vendor}/{name}/{version}/revisions/{revision_id}:promote` — make a draft revision live.
+
+    - `POST /apis/{vendor}/{name}/{version}/revisions/{revision_id}:archive` — retire a draft revision.
+
+    - `DELETE /apis/{vendor}/{name}/{version}` — deregister the API and all its revisions.
+
+
+    Newly imported revisions are **never auto-promoted** — callers must explicitly `:promote` to flip
+    the live pointer. Hot-path Broker calls can pin to a specific revision via the `Jentic-Revision` request
+    header for testing without flipping the pointer.
+
+
+    Sub-resources of an `Api` live under sibling tags: `API Operations` enumerates the operations exposed
+    by a registered revision; `API Spec` returns the underlying OpenAPI document for tooling.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - APIs
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-apis-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-audit-api
+  name: Jentic Audit API
+  description: >-
+    Append-only administrative audit trail — who did what, when. Distinct from `Executions` (brokered
+    upstream calls); this records control-plane mutations.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-audit-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-catalog-api
+  name: Jentic Catalog API
+  description: >-
+    The public API **catalog** — a registry-side browse/preview/import surface over the Jentic public-APIs
+    GitHub manifest. Powers the Discover experience: list importable APIs (`GET /catalog`, keyset cursor-paginated),
+    preview an entry's operations (`GET /catalog/{api_id}/operations`), refresh the cached manifest (`POST
+    /catalog:refresh`, `org:admin`), and import an entry into the local registry (`POST /catalog/{api_id}:import`).
+
+
+    The catalog is a cache of an upstream document, distinct from the local registry (`GET /apis`): `/apis`
+    is what this deployment has imported, `/catalog` is what it *could* import. Each entry's `registered`
+    flag reflects whether its `spec_url` already backs a local API revision. Import resolves to a plain
+    fetchable spec URL and reuses the standard async import job — no catalog identity ever crosses into
+    the importer.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Catalog
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-catalog-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-configuration-api
+  name: Jentic Configuration API
+  description: >-
+    Runtime, DB-backed platform configuration. Lets an operator set, read, and list configuration that
+    previously required hand-editing backend YAML and restarting the server — starting with credential
+    provider configs (e.g. Pipedream). A successful write rebuilds the in-process provider registry so
+    the change takes effect without a restart. Secret fields (e.g. `client_secret`) are encrypted at rest
+    and redacted on read. **Topology note:** in the combined (single-process) deployment a write takes
+    effect immediately for all surfaces. In a multi-process deployment the control/broker processes pick
+    up the new config at their next boot, not the instant the admin write lands; cross-process propagation
+    is a tracked follow-up.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-configuration-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-credentials-api
+  name: Jentic Credentials API
+  description: >-
+    Part of the **Core / Access** bounded context — the authoritative record of "who can call what, with
+    which secret". A `Credential` is the auth secret + header configuration the Broker injects on the
+    way out to an upstream API. Credentials reference registry content via the loose `(vendor, name, version)`
+    identity tuple (see `APIReference`) — there is no foreign key between Core and Registry, by design.
+    Cleartext secret material is returned **exactly once** at creation (and on rotation via `PATCH`).
+    Read paths return a redacted projection — last-N characters, hints, never the secret itself.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-credentials-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-discovery-api
+  name: Jentic Discovery API
+  description: >-
+    Unauthenticated metadata discovery — the JWKS document and OAuth authorization server metadata under
+    `/.well-known/*`.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-discovery-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-events-api
+  name: Jentic Events API
+  description: >-
+    Curated, severity-tagged event stream surfaced to dashboards and operators. Each event is either **informational**
+    (no action required, e.g. `import.completed`) or **actionable** (requires operator follow-up, e.g.
+    `credential.expiring_soon`, `execution.repeated_failure`). Events reference the underlying `ExecutionRecord`
+    or `Job` via `_links` and share `trace_id` for correlation. Subscribe live via `GET /events/stream`
+    (Server-Sent Events) or poll `GET /events` with a `since=` filter.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-events-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-executions-api
+  name: Jentic Executions API
+  description: >-
+    Append-only audit log of every Broker call (sync or async) — timing, status, trace IDs, and the upstream
+    API reference (`vendor:name:version`). Bodies are not stored. Records are written by the Broker; this
+    surface is read-only. To walk the history of a single logical request that fanned out into multiple
+    upstream calls, list with `?trace_id={trace_id}`.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Executions
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-executions-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-identity-api
+  name: Jentic Identity API
+  description: >-
+    Identity introspection for the calling principal (human, agent, or service account) — `GET /me` returns
+    the resolved subject, scopes, and permissions behind the presented token.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Identity
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-identity-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-inspect-api
+  name: Jentic Inspect API
+  description: >-
+    Resolve a single registered operation to its full structural detail — parameters, response schema,
+    security scheme, server URL. Heavier than `Lookup` (which is the Broker hot path) and separate from
+    `Search` (which only returns ranked summaries). Supports JSON, Markdown, and OpenAPI YAML response
+    formats via `Accept`-header content negotiation.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Inspect
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-inspect-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-jobs-api
+  name: Jentic Jobs API
+  description: >-
+    In-flight async-job tracker for both Registry import jobs and Broker async-execution jobs — one uniform
+    `Job` shape keyed by `kind`. Lifecycle only — type-specific result payloads (the imported revisions
+    for `import`, upstream response body for `execution`) live under `/jobs/{job_id}/result`. Result availability
+    follows the organisation-level retention policy (one-shot or TTL); once that expires, both `/jobs/{job_id}`
+    and `/jobs/{job_id}/result` `404`.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-jobs-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-mcp-api
+  name: Jentic MCP API
+  description: >-
+    MCP (Model Context Protocol) transport reporting. The `jentic mcp` stdio server terminates all MCP
+    protocol traffic locally; the control plane only sees plain HTTP. This tag covers the small reporting
+    surface behind it — today, the config-registration report `jentic setup`/`jentic skill init` send
+    after writing an MCP server entry for a detected agent runtime, which feeds the config-written → first-session
+    → first-execute adoption funnel.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - MCP
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-mcp-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-monitoring-api
+  name: Jentic Monitoring API
+  description: >-
+    Dashboard-oriented aggregation endpoints — execution volume, success/failure ratios, and top operations
+    over a bounded time window. Results are cached in-process (TTL ~120 s) so concurrent dashboard viewers
+    never stampede the database.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Monitoring
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-monitoring-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-notes-api
+  name: Jentic Notes API
+  description: >-
+    Free-form annotations attached to registry resources — an `Api`, an `ApiRevision`, a registered `operation_id`,
+    an `ExecutionRecord`, or a `Credential`. Used to capture human or agent observations about quirks:
+    *"this endpoint silently truncates email addresses to 64 chars"*, *"this credential rejects calls
+    outside US business hours"*, *"this operation needs `Accept: application/json` even though the spec
+    doesn't say so"*.
+
+
+    Notes are an information surface for agents — they accumulate over time as the platform learns from
+    real executions and surface back through `_links.notes` on the resources they annotate (woven in by
+    individual surfaces as they need it).
+
+
+    **Edit model.** Notes are editable via `PATCH`; each successful edit bumps a monotonic `revision`
+    counter on the `Note`. Use the `If-Match` header on `PATCH` and `DELETE` to guard against concurrent
+    modification.
+
+
+    **Confidence promotion.** Notes carry both a `confidence` value (`observed | suspected | verified`)
+    and a `confidence_source` (`client | platform_promoted`). Today only `client` is written by callers;
+    the `platform_promoted` value is reserved for a future surface that auto-promotes `observed` notes
+    to `verified` once enough matching `execution_feedback` accumulates.
+
+
+    **Authentication.** Any authenticated principal (agent or human) can post any note type. Per-type
+    policy (e.g. only humans may file `correction`) is enforced platform-side and not modelled in the
+    spec.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Notes
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-notes-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-oauth-api
+  name: Jentic OAuth API
+  description: >-
+    OAuth 2.0 / OIDC endpoints exposed by the platform authorization server — the authorize, token, introspection,
+    revocation, and assertion-mint endpoints plus the redirect callback.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-oauth-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-oauth-clients-api
+  name: Jentic OAuth Clients API
+  description: >-
+    Admin-managed registry of third-party OAuth clients (confidential, secret-bearing). Registered clients
+    integrate with Jentic One via the standard Authorization Code + PKCE flow. Admins can create, list,
+    update, rotate secrets, and deactivate clients. Deactivating a client immediately invalidates all
+    tokens issued through it.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - OAuth Clients
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-oauth-clients-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-overlays-api
+  name: Jentic Overlays API
+  description: >-
+    OpenAPI Overlay 1.0 (`https://spec.openapis.org/overlay/v1.0.0`) documents that correct an imported
+    spec without rewriting it. Overlays capture wrong required fields, missing security schemes, undocumented
+    headers, silent payload truncation, and other places where the upstream spec disagrees with the upstream
+    API's actual behaviour — without forking the spec or waiting for an upstream fix.
+
+
+    Overlays attach to the `Api` aggregate (not to a specific `ApiRevision`) and continue to apply across
+    revision bumps until materially superseded. The optional `target_revision_id` records the revision
+    the overlay was authored against, for auditing.
+
+
+    **Lifecycle.** New overlays start in `pending`. The Broker calls `POST /apis/{vendor}/{name}/{version}/overlays/{overlay_id}:confirm`
+    after the first successful upstream execution that exercised an overlay-patched operation, transitioning
+    the overlay to `confirmed`. This is the platform's only documented data-plane → control-plane writeback.
+    Once `confirmed`, an overlay stays `confirmed` — repeated `:confirm` calls return `200` with the existing
+    record unchanged.
+
+
+    **Edit model.** Overlay documents are editable via `PATCH` only while `pending`. Once `confirmed`
+    (or `deprecated`), the document is immutable — to change a confirmed overlay, submit a new one and
+    let the old one age out via `DELETE` (which soft-deprecates).
+
+
+    **Deletion.** `DELETE` is a **soft-deprecation** — the row is preserved with `status: deprecated`
+    for audit. Deprecated overlays no longer apply to spec-download merges (`?overlays=false` becomes
+    the default for that overlay) but stay queryable via `GET`. There is no hard-delete in this surface.
+
+
+    **Authentication.** Any authenticated principal (agent or human) can submit, edit, confirm, or deprecate
+    overlays. Platform-side rate limits gate abuse.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Overlays
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-overlays-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-permissions-api
+  name: Jentic Permissions API
+  description: >-
+    Part of the **Admin / Audit** bounded context — the catalogue of grantable permission strings. Permissions
+    are namespaced `resource:action` strings (`users:write`, `capabilities:execute`, `credentials:read`,
+    …) gating every other surface in the API. The set is platform-defined and small; `GET /permissions`
+    returns it in full, with each entry describing what it does, what it implies (the static implication
+    map; e.g. `capabilities:execute` implies `apis:read` and `executions:read`), and whether the calling
+    user is authorised to grant it.
+
+
+    One reserved superpower short-circuits individual checks in code: `org:admin` (full deployment-wide
+    access, granted via direct DB action). It is not enumerated to non-holders by `GET /permissions`,
+    and is rejected by `PUT /users/{user_id}/permissions` from any caller who doesn't already hold it.
+
+
+    The same vocabulary is used for `User.permissions` — coarse JWT-embedded scopes — so the catalogue
+    below covers user assignment. Toolkits have no separate scope tier of their own: a toolkit API key
+    is minted with the fixed broker-execute scope, and the per-binding fine-grained `PermissionRule[]`
+    (the inner PBAC tier) lives separately under the `Toolkit Permissions` tag.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-permissions-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-service-accounts-api
+  name: Jentic Service Accounts API
+  description: >-
+    Machine principals for non-interactive integrations — lifecycle (create, list, read, approve / deny,
+    enable / disable, archive) mirroring the agent surface.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Service Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-service-accounts-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-system-api
+  name: Jentic System API
+  description: >-
+    Operational endpoints for service health and platform tooling. Not part of any bounded context — surfaced
+    here so orchestrators and load balancers have a stable probe target.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - System
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-system-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-toolkit-credentials-api
+  name: Jentic Toolkit Credentials API
+  description: >-
+    Sub-resource of **Toolkits** (Core / Access bounded context). A toolkit doesn't own credentials directly
+    — it **binds** to credentials that already exist in `/credentials`. The binding is the link record
+    that authorises the Broker to inject a specific credential on calls made under this toolkit. The same
+    credential can be bound to many toolkits.
+
+
+    Bindings can carry initial fine-grained permission rules inline via `ToolkitCredentialBindRequest.permissions[]`;
+    subsequent changes go through the `Toolkit Permissions` sub-resource.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Toolkit Credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-toolkit-credentials-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-toolkit-keys-api
+  name: Jentic Toolkit Keys API
+  description: >-
+    Sub-resource of **Toolkits** (Core / Access bounded context). A toolkit can hold many API keys at
+    once — different agents, machines, or environments typically each get their own. Each key record (`ck_…`)
+    carries a label, optional CIDR allowlist, and a revoked flag. The plaintext value (`jntc_live_…`)
+    is shown exactly once at creation and never returned afterwards (only `key_preview` exposes the last
+    few characters).
+
+
+    Rotation is do-and-then-revoke: issue a fresh key, switch callers, then `DELETE` the old key. There
+    is no in-place rotate operation — multi-key rotation is always do-and-then-revoke so live callers
+    never see a window where every key is invalid.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Toolkit Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-toolkit-keys-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-toolkit-permissions-api
+  name: Jentic Toolkit Permissions API
+  description: >-
+    Sub-resource of **Toolkits** (Core / Access bounded context). The fine-grained PBAC tier — per-`(toolkit,
+    credential)` allow / deny / require-approval rules evaluated server-side. Rules use a priority model:
+    `deny` > `require-approval` > `allow` — the strictest matching rule wins. Absence of a matching rule
+    is an implicit deny. System rules (`_system: true`) participate in the same priority pool as user
+    rules.
+
+
+    Toolkits have no separate scope tier of their own: a toolkit API key is minted with the fixed broker-execute
+    scope (`capabilities:execute`), and every gated operation is decided by these per-binding rules.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Toolkit Permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-toolkit-permissions-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-toolkits-api
+  name: Jentic Toolkits API
+  description: >-
+    Part of the **Core / Access** bounded context — a `Toolkit` is a scoped bundle of credentials and
+    permissions issued to an agent or service. This tag covers **toolkit lifecycle**: list, create, read,
+    update, delete. Sub-resources (keys, credential bindings, per-binding permission rules) live under
+    the sibling tags `Toolkit Keys`, `Toolkit Credentials`, and `Toolkit Permissions`.
+
+
+    Two distinct values are involved: the **toolkit ID** is `tk_…` (public; appears in URLs, logs, and
+    `Jentic-Toolkit-Id` headers), and the **toolkit secret** is `jntc_live_…` (private; the plaintext
+    API key shown exactly once at toolkit creation or when a new key is issued).
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Toolkits
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-toolkits-api-openapi.yml
+  - type: Website
+    url: https://jentic.com/
+  - type: Documentation
+    url: https://docs.jentic.com/
+  - type: GettingStarted
+    url: https://docs.jentic.com/getting-started/quickstart/
+  - type: APIReference
+    url: https://docs.jentic.com/reference/public-apis/
+  - type: Signup
+    url: https://app.jentic.com/sign-up
+  - type: Console
+    url: https://app.jentic.com/
+  - type: BaseURL
+    url: https://api.jentic.com/api/v1
+  - type: SpectralRules
+    url: rules/jentic-rules.yml
+  - type: JSONSchema
+    url: json-schema/jentic-operation-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-agent-schema.json
+  - type: JSONSchema
+    url: json-schema/jentic-workflow-schema.json
+  - type: JSONStructure
+    url: json-structure/jentic-operation-structure.json
+  - type: Examples
+    url: examples/jentic-search-example.json
+  - type: Examples
+    url: examples/jentic-load-example.json
+  - type: Examples
+    url: examples/jentic-execute-example.json
+  - type: Examples
+    url: examples/jentic-register-example.json
+- aid: jentic:jentic-users-api
+  name: Jentic Users API
+  description: >-
+    Part of the **Admin / Audit** bounded context — the human roster of the organisation. One organisation,
+    many users; admin surfaces here cover create / list / read / update / delete plus the AIP-style action
+    verbs (`:disable`, `:enable`, `:reissue-invite`). Self-service is intentionally minimal: `GET /users/me`
+    to introspect, `POST /users/me:change-password` to rotate (which re-mints and returns a fresh token,
+    clearing any `must_change_password` gate so the caller need not re-login).
+
+
+    **First-run setup (no default credentials).** The platform ships with an empty users table — there
+    is no seeded `admin@local` account. On a fresh install `GET /health` reports `setup_required: true`
+    (with `next_step: create_admin`). The operator creates the first administrator via `POST /users:create-admin
+    {email, password}`: a one-time, unauthenticated endpoint that succeeds only while no user exists,
+    grants `org:admin`, and returns an auto-login `LoginResponse` with `must_change_password: false` (the
+    operator chose the password, so there is no forced rotation). It **self-closes** — once any user exists
+    it returns `410 setup_already_complete`, so it is safe to leave exposed during first boot; a single-row
+    setup sentinel is the concurrency backstop against racing callers (even ones using different emails).
+    After the first user exists, `setup_required` flips to `false`.
+
+
+    **Onboarding flow.** Admins create new users via `POST /users` (no password supplied). The response
+    carries a one-time `inv_…` invite token shown **once**; the admin hands it off out-of-band (Slack,
+    1Password, email — there is no platform-side email infrastructure in this revision). The new user
+    redeems via `POST /users:redeem-invite {invite_token, password}` and is auto-logged-in via the returned
+    `LoginResponse`. Tokens default to a 7-day TTL and are single-use; `:reissue-invite` issues a fresh
+    one if the original is lost or expired.
+
+
+    **Authentication.** Today only local (username + password) identity ships. The `User` schema carries
+    `auth_provider: local | external` and an `external_subject_id` field reserved for future SSO integrations
+    (Okta, Cognito, Azure AD); when SSO arrives, those users will be created via a separate provider-specific
+    router. The on-the-wire token contract — `Authorization: Bearer <jwt>` — is unchanged either way.
+
+
+    **Disabling and revocation.** `:disable` flips `active=false` and rejects subsequent `POST /auth/login`
+    **and** `POST /auth/refresh`. **Existing JWTs keep working until they expire** (≤ 1 hour with the
+    platform's default TTL). This is a deliberate trade-off; sub-minute revocation would require a server-side
+    session table.
+
+
+    **Session lifetime.** Login JWTs carry a 1-hour TTL. The UI keeps an active session alive by calling
+    `POST /auth/refresh` before expiry (sliding session); refresh re-reads permissions and the `must_change_password`
+    gate from the database and is refused with 401 `session_expired` once the original authentication
+    is older than the absolute window (`admin.auth.session_ttl_seconds`, 12 hours by default), forcing
+    a fresh login.
+  humanURL: https://docs.jentic.com/guides/mcp/remote-mcp/
+  baseURL: https://api.jentic.com/mcp
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/jentic-users-api-openapi.yml
   - type: Website
     url: https://jentic.com/
   - type: Documentation

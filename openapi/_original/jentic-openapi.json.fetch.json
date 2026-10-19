@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.jentic.com/openapi.json",
+ "final": "https://docs.jentic.com/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 1199357,
+ "sha256": "2aa8847efc8b0042add13b50169834ba17c133a5b8d42e7c8cc617af4acac36b",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}
